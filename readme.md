@@ -15,7 +15,7 @@
 
 ## Parciales
 
-- 1 Parcial
+- 1 Parcial (laboratorio con CodeBlocks)
 - 1 TP Grupal. Defensa oral (20 minutos) y 3-5 personas
 - 1 Recuperatorio
 
@@ -62,6 +62,16 @@ El 1° bit indica el signo
 |unsigned short int|%hu|16|[0 ; 65,536]|
 |unsigned int|%u|32|[0 ; 4,294,967,295]|
 |unsigned long long int|%llu|64|[0 ; 18,446,744,073,709,551,615]|
+
+- **Numeros Flotantes**
+
+|Tipo de Dato|Formato|Tamaño(bits)|Rango|
+|---|---|---|---|
+|float|%f o %e o %g|32|[±3.4×10^38 ; ±1.2×10^-38]|
+|double|%f o %e o %g|64|[±1.7×10^308 ; ±2.2×10^-308]|
+|long double|%Lf o %Le o %Lg|96 - 152||
+
+Mientras mejor categoria, mas precision de valor flotante
 
 ## Punteros
 
