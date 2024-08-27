@@ -3,10 +3,7 @@
 ## Indice
 
 > - [Clase 1 - Buenas Practicas, Crear Libreria, Tipo de Datos y Punteros](#clase-1)
-> - [Clase 2 - ](#clase-2)
-> - [Clase 3 - ](#clase-3)
-> - [Clase 4 - ](#clase-4)
-> - [Clase 5 - ](#clase-5)
+> - [Clase 2 - Array Unidimencionales](#clase-2)
 
 ## Profesores
 
@@ -143,4 +140,50 @@ Valor: U
 
 ---
 
-## Clase 2
+# Clase 2
+
+## Array Unidimencionales
+
+- **Administración del Espacio**
+
+Al momento de crear un array de N elementos, se reservan en memoria N cantidad de espacios multiplicado por el tamaño del tipo de dato; N*sizeof(tipo dato). Ejemplo:
+~~~
+int vector[5];
+~~~
+El tipo int ocupa 4 bytes. Por lo tanto reservamos 5*4(bytes)=20 bytes.
+
+- **Buenas Practicas**
+
+Es buena practica definir el tamaño del array mediante constantes define. Ejemplo:
+~~~
+#define TAM 5
+
+int vector[TAM];
+~~~
+
+- **Retornar Tamaño**
+
+Podemos saber la cantidad de elementos que tiene un array que tiene con la siguiente formula:
+~~~
+sizeof(vector)/sizeof(int);
+~~~
+sizeof retorna tamaño, en este caso el tamaño del vector (5*4=20) y del tipo int(4 bytes). Por lo que ya no es necesario pasar a una función el tamaño del array.
+
+-  **Aritmetica de Punteros**
+
+Debemos hacer el uso aritemtica de punteros en cadenas y arrays, y evitar utilizar subindices Ejemplo:
+~~~
+void mostrarVectorEntero(int *vec, unsigned int tamanio)
+{
+    unsigned int i;
+
+    for (i = 0; i < tamanio; i++)
+    {
+        // printf("%d\n",*vec);
+        // vec++;
+        // Es lo mismo utilizar el de arriba
+
+        printf("%d\n", *(vec + i));
+    }
+}
+~~~
