@@ -5,16 +5,20 @@
 > - [Clase 1 - Buenas Practicas, Crear Libreria, Tipo de Datos y Punteros](#clase-1)
 > - [Clase 2 - Array Unidimencionales](#clase-2)
 
-## Profesores
-
-- Pablo Soligo
-- Dario Hirschfeldt
-
 ## Parciales
 
 - 1 Parcial (laboratorio con CodeBlocks)
 - 1 TP Grupal. Defensa oral (20 minutos) y 3-5 personas
 - 1 Recuperatorio
+
+## Información Extra
+
+- **Profesores:** Pablo Soligo
+- **Alumno:** Tiago Pujia
+- **Comisión:** 2600 (martes tarde)
+- **Fecha Inicio:** 13/08/2024
+- **[Clases Grabadas](https://youtube.com/playlist?list=PLENvh_JZMnA6n-wdPgmxpLHa4OBW7Qxxo&si=8chccEFcD95x4y22)**
+- **[Apunte(este mismo)](https://github.com/Tiago-Pujia/Apunte-Topicos-Programacion)**
 
 ---
 

@@ -1,42 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TAM 5
+#define TAM 100
 
-void mostrarVectorEntero(int *vec, unsigned int tamanio)
+void mostrarVector(int *vec, unsigned short int tamanio)
 {
     unsigned int i;
 
+    printf("[");
     for (i = 0; i < tamanio; i++)
     {
-        // printf("%d\n",*vec);
-        // vec++;
-
-        printf("%d\n", *(vec + i));
+        i < tamanio - 1
+            ? printf("%d, ", *(vec + i))
+            : printf("%d", *(vec + i));
     }
+    printf("]\n");
 }
 
-void insetarVectorOrdenado(int *vec, unsigned int tamanio, int ingreso)
+void insertarOrdenadoVector(int *vec, unsigned short int tamanio, int *ce, int ingreso)
 {
-    int *ini = vec;
-    vec += tamanio;
+    unsigned short int i = *ce;
 
-    while ((vec > ini) && (*(vec - 1) > ingreso || *(vec - 1) == 0))
+    if (*ce >= tamanio)
+        return 0;
+
+    while (i > 0 && *(vec + i - 1) > ingreso)
     {
-        *vec = *(vec - 1);
-        vec--;
+        *(vec + i) = *(vec + i - 1);
+        i--;
     }
-    *vec = ingreso;
+
+    *(vec + i) = ingreso;
+    (*ce)++;
 }
 
 int main()
 {
-    int vec[TAM] = {}, vecInse[] = {3, 9, 7, 1, 16, 5, 4, 8}, i, ce = 0;
+    int vec1[TAM] = {8, 9, 1, 5, 6, 7}, vec2[] = {}, i, ce1 = 6, ce2 = 0;
 
-    for (i = 0; i < sizeof(vecInse) / sizeof(*vecInse); i++)
-        insetarVectorOrdenado(vec, TAM, vecInse[i]);
+    for (i = 0; i < ce1; i++)
+        insertarOrdenadoVector(vec2, TAM, &ce2, *(vec1 + i));
 
-    mostrarVectorEntero(vec, TAM);
+    mostrarVector(vec2, ce2);
 
     return 0;
 }
