@@ -2,9 +2,11 @@
 
 ## Indice
 
-> - [Clase 1 - Buenas Practicas, Crear Libreria, Tipo de Datos y Punteros](#clase-1)
-> - [Clase 2 - Array Unidimencionales](#clase-2)
-> - [Clase 3 - Matrices](#clase-3)
+- [Introducción](#introducción)
+- [Clase 1](#clase-1)
+- [Clase 2 - Vectores](#clase-2---vectores)
+- [Clase 3 - Matrices](#clase-3---matrices)
+- [Clase 4 - Cadenas](#clase-4---cadenas)
 
 ## Parciales
 
@@ -43,7 +45,6 @@ Luego para incluirlo dentro del main hacemos uso de: `#include "libs/nombre.h"`
 
 ## Tipos de Datos
 El tipo de archivo numero (int) se le puede hacer ciertas modificaciones para modificar la longitud de bits o si esta con signo. Las clausulas se colocan detras del int.
-
 
 - **Numeros Signados**
 
@@ -89,7 +90,6 @@ int *direccionNombre = &nombre;
 printf("Direccion de Memoria: %u\n",direccionNombre);
 printf("Valor de la dirección: %c\n", *direccionNombre)
 ~~~
-
 
 ### Ejemplo de Uso
 
@@ -145,11 +145,9 @@ Valor: U
 
 ---
 
-# Clase 2
+# Clase 2 - Vectores
 
-## Array Unidimencionales
-
-- **Administración del Espacio**
+## Administración del Espacio
 
 Al momento de crear un array de N elementos, se reservan en memoria N cantidad de espacios multiplicado por el tamaño del tipo de dato; N*sizeof(tipo dato). Ejemplo:
 ~~~
@@ -157,7 +155,7 @@ int vector[5];
 ~~~
 El tipo int ocupa 4 bytes. Por lo tanto reservamos 5*4(bytes)=20 bytes.
 
-- **Buenas Practicas**
+## Buenas Practicas
 
 Es buena practica definir el tamaño del array mediante constantes define. Ejemplo:
 ~~~
@@ -166,7 +164,7 @@ Es buena practica definir el tamaño del array mediante constantes define. Ejemp
 int vector[TAM];
 ~~~
 
-- **Retornar Tamaño**
+## Retornar Tamaño
 
 Podemos saber la cantidad de elementos que tiene un array que tiene con la siguiente formula:
 ~~~
@@ -174,28 +172,25 @@ sizeof(vector)/sizeof(int);
 ~~~
 sizeof retorna tamaño, en este caso el tamaño del vector (5*4=20) y del tipo int(4 bytes). Por lo que ya no es necesario pasar a una función el tamaño del array.
 
--  **Aritmetica de Punteros**
+## Aritmetica de Punteros
 
-Debemos hacer el uso aritemtica de punteros en cadenas y arrays, y evitar utilizar subindices Ejemplo:
+Debemos hacer el uso aritemtica de punteros en cadenas y arrays, y evitar utilizar subindices. Para esto, indicamos con el puntero la posición del inicio `*vec` y despues en el ciclo lo vamos incrementando `vec++`. Ejemplo:
 ~~~
-void mostrarVectorEntero(int *vec, unsigned int tamanio)
+void mostrarVectorEntero(int *vec, int tamanio)
 {
-    unsigned int i;
+    int *fin = vec + tamanio;
 
-    for (i = 0; i < tamanio; i++)
+    while(vec < fin)
     {
-        // printf("%d\n",*vec);
-        // vec++;
-        // Es lo mismo utilizar el de arriba
-
-        printf("%d\n", *(vec + i));
+        printf("%d\n", *vec);
+        vec++;
     }
 }
 ~~~
 
 ---
 
-# Clase 3
+# Clase 3 - Matrices
 
 ## Compresión del Proceso Interno de una Matriz
 
@@ -239,7 +234,7 @@ for(i = 0 ; i < tamanio ; i++)
             printf("%d ",*(*(matriz+i)+j));
 ~~~
 
-También podemos utilizar una técnica llamada _Matriz Espejada_, en la que podemos acceder a la casilla espejo de la posición en la que nos encontramos para diferentes usos. Solo necesitamos intercambiar "i" y "j" al recorrer la matriz de manera triangular.
+También podemos utilizar una técnica llamada _Matriz Espejada_, en la que podemos acceder a la casilla espejo de la posición en la que nos encontramos para diferentes usos. Solo necesitamos intercambiar `i (F)` y `j (C)` al recorrer la matriz de manera triangular.
 
 ![imagen](imgs/matrizEspejada.png)
 
@@ -259,15 +254,26 @@ La matriz identidad es aquella donde solo tiene 0 en todas las casillas y 1 en l
 
 ~~~
 int i, j;
-// Chequear Diagonal
+// Chequear Diagonal Principal
 for(i = 0 ; i < f ; i++)
     if(1 != *(*(matriz+i)+i))
         return 0;
 
-// Chequear Triangulos con espejado
+// Chequear Triangulos con Espejado
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++)
         if(0 != *(*(matriz+i)+j) || 0 != *(*(matriz+j)+i))
+            return 0;
+
+return 1;
+~~~
+
+O incluso para que quede mas optimizado se puede unir en 1 solo el bucle:
+~~~
+int i, j;
+for(i = 1 ; i < f ; i++)
+    for(j = 0 ; j < i ; j++)
+        if(0 != *(*(matriz+i)+j) || 0 != *(*(matriz+j)+i) ||1  != *(*(matriz+i)+i))
             return 0;
 
 return 1;
@@ -300,11 +306,14 @@ void transponerMatriz(char matriz[][COL_MAX], int tamanio) {
 }
 ~~~
 
-- **Recorrido en Espiral** (desde afuera hacia adentro)
-
 - **Recorrido en Espiral** (desde dentro hacia afuera)
  
+![imagen](imgs/matrizEspiral.png)
+
 Hacer uso de topes donde decidimos los limites dentro de la matriz (limite superior, inferior, izquierdo y derecho)
+
+- **Recorrido en Espiral** (desde afuera hacia adentro)
+
 
 ## Eliminar Constantes
 
@@ -317,7 +326,7 @@ Podemos eliminar la predefinicion de tamaños de matrices con constantes para ha
 void mostrarMatriz(int matriz[][TAM_COL],int f, c);
 ~~~
 
-Una opción posible es poner una constante de tamaño maximo con un numero muy grande. Teniendo la desventaja que reservamos memoria que no se va a utilizar, pero es lo que se utiliza (por ahora).
+Una opción posible es poner una constante de tamaño maximo con un numero muy grande. Teniendo la desventaja que reservamos memoria que no se va a utilizar, pero es lo que se utiliza (por ahora) hasta la unidad de memoria dinamica.
 
 ~~~
 #define MAX_COL 50
@@ -339,3 +348,184 @@ int main()
     printf("Identidad: %d",resultado);
 }
 ~~~
+
+---
+
+# Clase 4 - Cadenas
+
+## Tipo de Dato Char
+
+Tipo de dato que ocupa 8 bits (1 byte) donde podemos representar valores de la tabla ASCII haciendo uso de las comillas simples. Como dentro contiene valores numericos, podemos hacer operaciones arimeticas. Ejemplo:
+
+~~~
+char x = 'a' + 1;
+// resultado = b
+~~~
+
+## Tipo de Dato Cadena
+
+Tipo de dato compuesto por un array del tipo char, donde al final termina con el caracter nulo `'\0'`, este indica cuando termnina la cadena. 
+
+La Representación Burocratica creamos un array formal e indicamos posición por posición el valor que tendra la cadena en esa posición indicando el caracter nulo:
+
+~~~
+char cad[5] = {'H','o','l','a','\0',}
+~~~
+
+La representación comun indicamos el texto mediante comillas dobles y el tamaño de la cadena y el caracter nulo se asignan solos.
+
+~~~
+char cad[] = "Hola";
+~~~
+
+Se puede hacer el uso de punteros pero no es recomendao. por que crea la cadena de manera constante (no puede ser modificada en ningun sentido). Ejemplo:
+
+~~~
+char *cad = "Hola";
+~~~ 
+
+## Recorrido de una Cadena
+
+El recorrido de una cadena se debe utiliar fundamentalmente la logica de punteros, solo que en una cadenas es mas sencillo. Ejemplo:
+
+~~~
+// Devuelve la longitud de una cadena.
+int strlen(char* str)
+{
+    const char* ini = str;
+    while(*str)
+        str++;
+    return str-ini;
+}
+~~~
+
+Para recorrer una cadena de principio a fin('\0') tan solo hacemos uso de un while donde verificamos si es correcto el valor donde se encuentra posicionado el array, la unica manera que no lo sea es si el caracter nulo que en ascii es 0. Luego, dentro del bucle vamos aumentando la posición del puntero.
+
+Si queremos obtener la cantidad de posiciones recorridas, debemos crear una variable con la dirección de memoria original del vector, y restamos la direccón nueva con la original.
+
+Este recorrido es mas eficiente que utilizar una variable de incremento "i".
+
+## Funciones de la libreria `string.h`
+
+Las funciones de las librerias tendran que ser creadas a mano, no estara permitido el uso de estas. Exceptuando funciones que van mas alla de C como "scanf"
+
+- `strlen`
+
+Devuelve la longitud de una cadena.
+
+~~~
+int strlen(char* str)
+{
+    const char* ini = str;
+    while(*str)
+        str++;
+    return str-ini;
+}
+~~~
+
+- `strcat`
+
+Concatena/Añande una cadena detras de otra, uniendolas.
+
+~~~
+char* strcat(char *destino, char *origen)
+{
+    char *ini = destino;
+    while(*destino)
+        destino++;
+    
+    while(*origen)
+    {
+        *destino = *origen;
+        destino++;
+        origen++;
+    }
+
+    *destino = '\0';
+    return ini;
+}
+~~~
+
+- `strcpy`
+
+Realiza una copia del contenido de un string a otro string.
+
+~~~
+void strcpy(char *destino, char *origen)
+{
+    while(*origen)
+    {
+        *destino = *origen;
+        destino++;
+        origen++;
+    }
+    *destino = '\0';
+}
+~~~
+
+- `strchr`
+
+Se utiliza para buscar la primera aparición de un carácter
+
+~~~
+int strchr(char *str, const char buscar)
+{
+    const char *ini = str;
+    while (*str) {
+        if (*str == buscar)
+            return str-ini;
+        str++;
+    }
+    return -1;
+}
+~~~
+
+- `strrchr`
+
+Se utiliza para buscar la ultima aparición de un carácter
+
+~~~
+int strrchr(char *str, const char buscar)
+{
+    int posicion = -1;
+    const char *ini = str;
+    while (*str) {
+        if (*str == buscar)
+            posicion = str-ini;
+        str++;
+    }
+    return posicion;
+}
+~~~
+
+- `strcmp`
+
+Compara 2 cadenas y devuelve el resultado, estos pueden ser:
+- str1 = str2 => 0 (cero)
+- str1 > str2 => Numero Positivo
+- str1 < str2 => Numero Negativo
+
+~~~
+int strcmp(const char *str1,const char *str2)
+{
+    while(*str1 == *str2 && *str1 && *str2)
+    {
+        str1++;
+        str2++;
+    }
+
+    return *str1 - *str2;
+}
+~~~
+
+- `strncmp`
+
+~~~
+~~~
+
+- `strncpy`
+
+~~~
+~~~
+
+- `strstr`
