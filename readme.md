@@ -541,43 +541,42 @@ int strcmp(const char *str1,const char *str2)
 ## Sección de Memoria de la CPU
 
 Dentro de la memoria de la CPU, se encuentra dividia por varias secciones:
-1. `texto` - Almacena instrucciones de Assembly
-2. `data` - Almacena datos inicializados
-3. `bss` - Almacena datos no inicializados
+1. `text` - Almacena las instrucciones en lenguaje ensamblador (Assembly).
+2. `data` - Almacena datos inicializados; variables globales de Assembly
+3. `bss` - Almacena datos no inicializados; variables globales al inicio del programa
 4. `heap` (memoria dinamica) - Asignación de memoria en tiempos de ejecución
-5. `stack` (pila) - Almacena variables locales
+5. `stack` (pila) - Almacena variables locales y en el contexto de las funciones.
 
 
 ![imagen](imgs/memoriaCPU.png)
 
-En este caso, los importante son pila y la memoria dinamica. En la pila creamos nuestras variables en C donde guardara una dirección de seccion de memoria dinamica, donde alli se encontrara el contenido de la variable. 
+En este caso, los importante son pila (stack) y la memoria dinamica (heap). En la pila se crean nuestras variables en C, las cuales almacenan direcciones que apuntan a la sección de memoria dinámica, donde se encuentra el contenido de la variable. La pila se reserva y libera de manera automatica, pero la memoria dinamica debe ser manipulada completamente por el usuario.
 
-La pila tiene tamaño maximo de 2MB en windows y 8MB en linux. La memoria dinamica (como su nombre lo indica), no tiene un espacio reservado, si no que puede expandirse en tiempos de compilación.
+La pila tiene un tamaño máximo de 2 MB en Windows y 8 MB en Linux. La memoria dinámica (heap), como su nombre lo indica, no tiene un espacio reservado fijo, sino que puede expandirse en tiempo de ejecución según las necesidades del programa.
 
-La ventaja que tiene esta metodologia es que cuando finaliza una variable/función, dejamos el espacio liberado para una proxima función. De esta manera hacemos que el contenido de nuestro programa se quede los registros de la CPU y no tengamos que ir a buscarlo a cache, ram o rom. Tambien nos permite dejar atras la idea de un tamaño maximo por matriz para darcela a una función, si no que se puede definir el tamaño en tiempos de compilación.
+La ventaja de este método es que, cuando una variable o función finaliza, se libera el espacio en la memoria, permitiendo su reutilización en futuras llamadas. De esta manera, el contenido de nuestro programa se mantiene en los registros de la CPU, evitando la necesidad de acceder a la caché, RAM o ROM. Además, nos permite eliminar la restricción de un tamaño máximo fijo para estructuras como matrices, permitiendo definir su tamaño en tiempo de ejecución.
 
 ## Uso Practico de la Memoria Dinamica
 
-1. Creamos una variable puntero donde guardara la dirección de la memoria dinamica.
+1. Creamos una variable puntero que guardará la dirección de la memoria dinámica.
 
-2. Hacemos uso de la función `malloc(tamanio_bytes)`, esta función se utiliza para asignar memoria en la sección de memoria dinamica, retorna la dirección de memoria. Se le ingresa un tamaño (en bytes) de la memoria que se reserva, por lo que hacemos uso de `size_of`. Siempre hay que verificar con una condición si devolvio una dirección.
+2. Usamos la función `malloc(tamaño_bytes)`, que se utiliza para reservar memoria en la sección de memoria dinámica. Esta función retorna la dirección de la memoria asignada. Debemos especificar el tamaño (en bytes) de la memoria que queremos reservar, para lo cual utilizamos `sizeof`. Es importante verificar si malloc devolvió una dirección válida.
 
-3. Una vez asignado la dirección, podemos asignar nuestros valores y estos se guardaran en la memoria dinamica. Haciendo uso de "
-*variable = ..."
+3. Una vez que hemos asignado la dirección, podemos asignar nuestros valores, los cuales se guardarán en la memoria dinámica. Para ello, usamos la sintaxis *variable = ....
 
-1. Cuando se termino de hacer uso de esta memoria, debemos liberarla de su reservación con la función `free(dirección)`
+1. Cuando terminamos de usar esta memoria, debemos liberarla con la función `free(dirección)` para evitar fugas de memoria.
 
 **Ejemplo:**
 
 ~~~
-int *pi; // Creamos nuestra variable tipo punterp
+int *pi; // Creamos nuestra variable tipo puntero
 pi = malloc(sizeof(int)); // Apuntamos hacia una dirección de memoria dinamica
 
-if(pi != null) // Chequear que retorno una dirección de memoria
+if(pi != NULL) // Chequear que retorno una dirección de memoria
 {
     *pi = 7;
     // ... Hacemos lo que queramos con ella
-    printf("Valor asignado %d en la dirección %d",*pi,pi);
+    printf("Valor asignado %d en la direccion %p",*pi,pi); // Tipo %p para imprimir una dirección de memoria
 } 
     
 free(pi); // Liberamos la memoria
@@ -585,11 +584,11 @@ free(pi); // Liberamos la memoria
 
 ## Uso Practico con Matrices
 
-Haciendo uso de este concepto, podemos crear matrices de tamanio dinamico, pudiendo hacer las funciones de usos flexibles y no utilizando las tecnicas de tamaño maximo de columnas y filas. A cada función debemos pasarle un puntero de la matriz que seria con doble asterisco, ejemplo: `int **matriz`, indicando que es una matriz.
+Haciendo uso de este concepto, podemos crear matrices de tamaño dinámico, permitiendo funciones más flexibles sin depender de técnicas que limitan el tamaño máximo de columnas y filas. A cada función que manipula la matriz debemos pasarle un puntero a un puntero, por ejemplo: `int **matriz`, indicando que se trata de una matriz.
 
-- `Liberar Memoria`
+- **`Liberar Memoria`**
 
-Para esto, recorremos cada fila y vamos liberando uno por uno. Luego de liberar cada fila, se usa denuevo el free para liberar el arreglo de puntero para filas.
+Para liberar la memoria, recorremos cada fila y la liberamos una por una. Luego de liberar cada fila, liberamos el arreglo de punteros que apuntan a las filas.
 
 ~~~
 void liberarMatriz(int** matriz, const int filas) {
@@ -599,24 +598,24 @@ void liberarMatriz(int** matriz, const int filas) {
 }
 ~~~
 
-- `Crear Matriz`
+- **`Crear Matriz`**
 
-Hacemos uso de malloc en un inicio para indicar la creación de la matriz, hacemos uso de sizeof(int*) con la cantidad de filas. Luego, recorremos cada fila y vamos reservando el espacio en memoria segun la cantidad de columnas. Recordar siempre verificar los errores.
+Usamos malloc inicialmente para crear la matriz, reservando espacio para el arreglo de punteros a filas (int*). Luego, recorremos cada fila y reservamos espacio en memoria según la cantidad de columnas. Es importante siempre verificar si hay errores durante la asignación de memoria.
 
 ~~~
 int **crearMatriz(int filas, int columnas)
 {
     int i, j, **matriz = (int**) malloc(filas * sizeof(int*));
 
-    if(matriz == NULL)
+    if(matriz == NULL) // Verificar si se retorno la dirección
         return NULL;
     
-    for(i=0;i<filas;i++) // asignamos memoria para cada fila (columnas)
+    for(i = 0;i < filas; i++) // asignamos memoria para cada fila (columnas)
     {
         *(matriz+i) = (int*) malloc(columnas * sizeof(int));
 
         // Si ocurrio un error, liberamos toda la memoria
-        if(*(matriz+i) == null)
+        if(*(matriz+i) == NULL)
         {
             liberarMatriz(matriz,i);
             return NULL;
@@ -627,7 +626,7 @@ int **crearMatriz(int filas, int columnas)
 }
 ~~~
 
-La ventaja de usar este metodo, es que podemos definir en cada fila el tamaño de las columnas que queramos, siendo irregular. Aunque no siempre es necesario.
+La ventaja de usar este método es que podemos definir un tamaño diferente de columnas para cada fila, creando matrices irregulares si es necesario.
 
 ---
 
