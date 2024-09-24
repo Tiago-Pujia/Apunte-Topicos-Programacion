@@ -631,3 +631,95 @@ La ventaja de usar este método es que podemos definir un tamaño diferente de c
 ---
 
 # Clase 6
+
+## Reservar Espacio ya Asignado
+
+`realloc()` se utiliza para cambiar el tamaño de un bloque de memoria previamente asignado por malloc sin perder memoria. Recibe como primer parametro el puntero de memoria ya asignado y segundo el espacio nuevo que puede ser mayor o menor que la original.
+
+## Macros
+
+El compilador al ver un codigo escrito con hash `#`, lo que hace es copiar y pegar el contenido o el contenido de ese archivo a nuestro archivo donde se lo esta llamando, incluyendo defines e includes.
+
+Con las macros podes escribir funciones en forma lineal haciendo uso de la constante `#define`. Ejemplo:
+
+~~~
+# define MAX(X,Y) (X) > (Y) ? (X) : (Y)
+
+printf("el maximo es: %d",MAX(50,10));
+// Resultado = el maximo es 50
+~~~
+
+## Argumentos al Main
+
+El main tiene ninguno o 2 parametros:
+
+`int main(int argc,char* argv[])`
+
+- **argc** = cantidad de argumentos del array
+- **argc[] = Todos los elementos con cadenas de caracteres
+
+Si queremos imprimir el contenido debemos:
+~~~
+int main(int argc, char*argv[])
+{
+    int i;
+
+    for(i=0 ; i < argc ; i++)
+    {
+        printf("%s\n", argv[i]);
+    }
+}
+
+// Resultado: D:\git\programacion\apunte\ejecutado.exe
+// En este caso retorna la ruta del ejecutable
+~~~
+
+Es un uso que se le da unicamente a los programadores porque tiene la caracteristica que se le puede ingresar datos como un scanf sin necesidad de llamarlo, y el contenido que se escribe en consola se guarda en el array.
+
+## Función con Tipo de Dato Universal
+
+Para esto hacemos uso del tipo `void`
+
+Ejemplo:
+~~~
+void *mostrarVector(void *vec, size_t tamanio)
+{
+    void *ini = vec;
+    for(int i = 0 ; i < tamanio ; i++)
+    {
+        printf("%d"); // Error
+        vec++;
+    }
+
+    return ini;
+}
+~~~
+
+El problema que tiene es que para mostrar en consola no es posible, por lo que para solucionarlo se le pasa como argumento la dirección de una función que transformara y muestra el tipo de dato especifico, ejemplo:
+
+~~~
+void mostrarEntero(void *elemento)
+{
+    int a = (int)(*elemento);
+    printf("%d",a);
+}
+
+void *mostrarVector(void *vec, size_t tamanio, void mostrarEntero(void*))
+{
+    void *ini = vec;
+    for(int i = 0 ; i < tamanio ; i++)
+    {
+        mostrarEntero(vec);
+        vec++;
+    }
+
+    return ini;
+}
+
+int main()
+{
+    int vec = {0,1,2,3}, tamanio = 4;
+
+    mostrarVector(vec,tamanio,mostrarEntero);
+}
+~~~
