@@ -84,7 +84,7 @@ Mientras mejor categoria, mas precision de valor flotante
 Un puntero es una variable que almacena una dirección de memoria de otra variable dentro de la computadora. Se utiliza para la manipulación de variables desde diferentes funciones.
 
 La variable que almacenará la dirección debe ser de tipo int e incluir el signo "\*". Para obtener la dirección de una variable, utilizamos el operador "&". Además, podemos utilizar el operador "\*" delante de una variable que contiene una dirección para acceder al valor almacenado en esa dirección, cualquier operación implica el valor original. Ejemplo:
-~~~
+~~~c
 char nombre = 'T';
 int *direccionNombre = &nombre;
 
@@ -96,7 +96,7 @@ printf("Valor de la dirección: %c\n", *direccionNombre)
 
 El siguiente programa no permite modificar el contenido de la variable "valor" dentro de la función, realiza una copia:
 
-~~~
+~~~c
 void miFuncion(char valor)
 {
     valor = 'U';
@@ -121,7 +121,7 @@ Valor: R
 ~~~
 
 Para poder realizar eso querido debemos:
-~~~
+~~~c
 void miFuncion(int *valor)
 {
     *valor = 'U'; // Modificamos el valor original
@@ -151,7 +151,7 @@ Valor: U
 ## Administración del Espacio
 
 Al momento de crear un array de N elementos, se reservan en memoria N cantidad de espacios multiplicado por el tamaño del tipo de dato; N*sizeof(tipo dato). Ejemplo:
-~~~
+~~~c
 int vector[5];
 ~~~
 El tipo int ocupa 4 bytes. Por lo tanto reservamos 5*4(bytes)=20 bytes.
@@ -159,7 +159,7 @@ El tipo int ocupa 4 bytes. Por lo tanto reservamos 5*4(bytes)=20 bytes.
 ## Buenas Practicas
 
 Es buena practica definir el tamaño del array mediante constantes define. Ejemplo:
-~~~
+~~~c
 #define TAM 5
 
 int vector[TAM];
@@ -168,7 +168,7 @@ int vector[TAM];
 ## Retornar Tamaño
 
 Podemos saber la cantidad de elementos que tiene un array que tiene con la siguiente formula:
-~~~
+~~~c
 sizeof(vector)/sizeof(int);
 ~~~
 sizeof retorna tamaño, en este caso el tamaño del vector (5*4=20) y del tipo int(4 bytes). Por lo que ya no es necesario pasar a una función el tamaño del array.
@@ -176,7 +176,7 @@ sizeof retorna tamaño, en este caso el tamaño del vector (5*4=20) y del tipo i
 ## Aritmetica de Punteros
 
 Debemos hacer el uso aritemtica de punteros en cadenas y arrays, y evitar utilizar subindices. Para esto, indicamos con el puntero la posición del inicio `*vec` y despues en el ciclo lo vamos incrementando `vec++`. Ejemplo:
-~~~
+~~~c
 void mostrarVectorEntero(int *vec, int tamanio)
 {
     int *fin = vec + tamanio;
@@ -200,7 +200,7 @@ Para una mejor comprensión de cómo funcionan las matrices NxN utilizando punte
 ![imagen](imgs/matrizFormaReal.png)
 
 Esto quiere decir que para acceder a un elemento de un array de debe utilizar un doble puntero al estilo `*(*(matriz+F)+C)`, donde con F indicamos la fila y C la columna. Ejemplo:
-~~~
+~~~c
 int matriz[3][3] = {
     {00,01,02},
     {10,11,12},
@@ -221,7 +221,7 @@ La optimización de la manera de recorrer las matrices es muy importante.
 
 ![imagen](imgs/matrizTriangular.png)
 
-~~~
+~~~c
 int i, j;
 
 // Recorrido de Matriz Triangular
@@ -239,7 +239,7 @@ También podemos utilizar una técnica llamada _Matriz Espejada_, en la que pode
 
 ![imagen](imgs/matrizEspejada.png)
 
-~~~
+~~~c
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++){
         printf("Valor: %d" , *(*(matriz+i)+j) );
@@ -253,7 +253,7 @@ La matriz identidad es aquella donde solo tiene 0 en todas las casillas y 1 en l
 
 ![imagen](imgs/matrizIdentidad.png)
 
-~~~
+~~~c
 int i, j;
 // Chequear Diagonal Principal
 for(i = 0 ; i < f ; i++)
@@ -270,7 +270,7 @@ return 1;
 ~~~
 
 O incluso para que quede mas optimizado se puede unir en 1 solo el bucle:
-~~~
+~~~c
 int i, j;
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++)
@@ -288,7 +288,7 @@ Transponer una matriz es el proceso de intercambiar filas por columnas. Esto sig
 
 La optimización para transponer una matriz cuadrada consiste en aprovechar el recorrido triangular, es decir, solo intercambiar los elementos que estan por fuera de la diagonal principal (ya que la diagonal principal permanece intacta). Hacemos uso del espejado de matriz junto una variable auxiliar al momento de realizar el intercambio.
 
-~~~
+~~~c
 void transponerMatriz(char matriz[][COL_MAX], int tamanio) {
     int i, j;
     char aux;
@@ -320,7 +320,7 @@ Hacer uso de topes donde decidimos los limites dentro de la matriz (limite super
 
 Podemos eliminar la predefinicion de tamaños de matrices con constantes para hacerlo de uso en bibliotecas, globales para cualquier matriz. Ejemplo de error:
 
-~~~
+~~~c
 #define TAM_COL 4
 #define TAM_FIL 4
 
@@ -329,7 +329,7 @@ void mostrarMatriz(int matriz[][TAM_COL],int f, c);
 
 Una opción posible es poner una constante de tamaño maximo con un numero muy grande. Teniendo la desventaja que reservamos memoria que no se va a utilizar, pero es lo que se utiliza (por ahora) hasta la unidad de memoria dinamica.
 
-~~~
+~~~c
 #define MAX_COL 50
 #define MAX_FIL 50
 
@@ -358,7 +358,7 @@ int main()
 
 Tipo de dato que ocupa 8 bits (1 byte) donde podemos representar valores de la tabla ASCII haciendo uso de las comillas simples. Como dentro contiene valores numericos, podemos hacer operaciones arimeticas. Ejemplo:
 
-~~~
+~~~c
 char x = 'a' + 1;
 // resultado = b
 ~~~
@@ -369,19 +369,19 @@ Tipo de dato compuesto por un array del tipo char, donde al final termina con el
 
 La Representación Burocratica creamos un array formal e indicamos posición por posición el valor que tendra la cadena en esa posición indicando el caracter nulo:
 
-~~~
+~~~c
 char cad[5] = {'H','o','l','a','\0',}
 ~~~
 
 La representación comun indicamos el texto mediante comillas dobles y el tamaño de la cadena y el caracter nulo se asignan solos.
 
-~~~
+~~~c
 char cad[] = "Hola";
 ~~~
 
 Se puede hacer el uso de punteros pero no es recomendao. por que crea la cadena de manera constante (no puede ser modificada en ningun sentido). Ejemplo:
 
-~~~
+~~~c
 char *cad = "Hola";
 ~~~ 
 
@@ -389,7 +389,7 @@ char *cad = "Hola";
 
 El recorrido de una cadena se debe utiliar fundamentalmente la logica de punteros, solo que en una cadenas es mas sencillo. Ejemplo:
 
-~~~
+~~~c
 // Devuelve la longitud de una cadena.
 int strlen(char* str)
 {
@@ -414,7 +414,7 @@ Las funciones de las librerias tendran que ser creadas a mano, no estara permiti
 
 Devuelve la longitud de una cadena.
 
-~~~
+~~~c
 int strlen(char* str)
 {
     const char* ini = str;
@@ -428,7 +428,7 @@ int strlen(char* str)
 
 Concatena/Añande una cadena detras de otra, uniendolas.
 
-~~~
+~~~c
 char* strcat(char *destino, char *origen)
 {
     char *ini = destino;
@@ -451,7 +451,7 @@ char* strcat(char *destino, char *origen)
 
 Realiza una copia del contenido de un string a otro string.
 
-~~~
+~~~c
 void strcpy(char *destino, char *origen)
 {
     while(*origen)
@@ -468,7 +468,7 @@ void strcpy(char *destino, char *origen)
 
 Se utiliza para buscar la primera aparición de un carácter
 
-~~~
+~~~c
 int strchr(char *str, const char buscar)
 {
     const char *ini = str;
@@ -485,7 +485,7 @@ int strchr(char *str, const char buscar)
 
 Se utiliza para buscar la ultima aparición de un carácter
 
-~~~
+~~~c
 int strrchr(char *str, const char buscar)
 {
     int posicion = -1;
@@ -506,7 +506,7 @@ Compara 2 cadenas y devuelve el resultado, estos pueden ser:
 - str1 > str2 => Numero Positivo
 - str1 < str2 => Numero Negativo
 
-~~~
+~~~c
 int strcmp(const char *str1,const char *str2)
 {
     while(*str1 == *str2 && *str1 && *str2)
@@ -521,17 +521,17 @@ int strcmp(const char *str1,const char *str2)
 
 - `strncmp`
 
-~~~
+~~~c
 ~~~
 
 - `strncpy`
 
-~~~
+~~~c
 ~~~
 
 - `strstr`
 
-~~~
+~~~c
 ~~~
 
 ---
@@ -568,7 +568,7 @@ La ventaja de este método es que, cuando una variable o función finaliza, se l
 
 **Ejemplo:**
 
-~~~
+~~~c
 int *pi; // Creamos nuestra variable tipo puntero
 pi = malloc(sizeof(int)); // Apuntamos hacia una dirección de memoria dinamica
 
@@ -590,7 +590,7 @@ Haciendo uso de este concepto, podemos crear matrices de tamaño dinámico, perm
 
 Para liberar la memoria, recorremos cada fila y la liberamos una por una. Luego de liberar cada fila, liberamos el arreglo de punteros que apuntan a las filas.
 
-~~~
+~~~c
 void liberarMatriz(int** matriz, const int filas) {
     for (int i = 0; i < filas; i++) // Liberar cada fila
         free(*(matriz+i));
@@ -602,7 +602,7 @@ void liberarMatriz(int** matriz, const int filas) {
 
 Usamos malloc inicialmente para crear la matriz, reservando espacio para el arreglo de punteros a filas (int*). Luego, recorremos cada fila y reservamos espacio en memoria según la cantidad de columnas. Es importante siempre verificar si hay errores durante la asignación de memoria.
 
-~~~
+~~~c
 int **crearMatriz(int filas, int columnas)
 {
     int i, j, **matriz = (int**) malloc(filas * sizeof(int*));
@@ -642,7 +642,7 @@ El compilador al ver un codigo escrito con hash `#`, lo que hace es copiar y peg
 
 Con las macros podes escribir funciones en forma lineal haciendo uso de la constante `#define`. Ejemplo:
 
-~~~
+~~~c
 # define MAX(X,Y) (X) > (Y) ? (X) : (Y)
 
 printf("el maximo es: %d",MAX(50,10));
@@ -659,7 +659,7 @@ El main tiene ninguno o 2 parametros:
 - **argc[] = Todos los elementos con cadenas de caracteres
 
 Si queremos imprimir el contenido debemos:
-~~~
+~~~c
 int main(int argc, char*argv[])
 {
     int i;
@@ -681,7 +681,7 @@ Es un uso que se le da unicamente a los programadores porque tiene la caracteris
 Para esto hacemos uso del tipo `void`
 
 Ejemplo:
-~~~
+~~~c
 void *mostrarVector(void *vec, size_t tamanio)
 {
     void *ini = vec;
@@ -697,7 +697,7 @@ void *mostrarVector(void *vec, size_t tamanio)
 
 El problema que tiene es que para mostrar en consola no es posible, por lo que para solucionarlo se le pasa como argumento la dirección de una función que transformara y muestra el tipo de dato especifico, ejemplo:
 
-~~~
+~~~c
 void mostrarEntero(void *elemento)
 {
     int a = (int)(*elemento);
