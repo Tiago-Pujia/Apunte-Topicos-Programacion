@@ -704,12 +704,12 @@ void mostrarEntero(void *elemento)
     printf("%d",a);
 }
 
-void *mostrarVector(void *vec, size_t tamanio, void mostrarEntero(void*))
+void *mostrarVector(void *vec, size_t tamanio, void mostrar(void*))
 {
     void *ini = vec;
     for(int i = 0 ; i < tamanio ; i++)
     {
-        mostrarEntero(vec);
+        mostrar(vec);
         vec++;
     }
 
