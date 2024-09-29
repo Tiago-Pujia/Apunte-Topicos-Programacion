@@ -3,11 +3,41 @@
 ## Indice
 
 - [Introducción](#introducción)
+  - [Indice](#indice)
+  - [Parciales](#parciales)
+  - [Información Extra](#información-extra)
 - [Clase 1](#clase-1)
+  - [Buenas Practicas](#buenas-practicas)
+  - [Crear Librerias](#crear-librerias)
+  - [Tipos de Datos](#tipos-de-datos)
+  - [Punteros](#punteros)
+    - [Definición](#definición)
+    - [Ejemplo de Uso](#ejemplo-de-uso)
 - [Clase 2 - Vectores](#clase-2---vectores)
+  - [Administración del Espacio](#administración-del-espacio)
+  - [Buenas Practicas](#buenas-practicas-1)
+  - [Retornar Tamaño](#retornar-tamaño)
+  - [Aritmetica de Punteros](#aritmetica-de-punteros)
 - [Clase 3 - Matrices](#clase-3---matrices)
+  - [Compresión del Proceso Interno de una Matriz](#compresión-del-proceso-interno-de-una-matriz)
+  - [Recorrido de Matrices](#recorrido-de-matrices)
+  - [Eliminar Constantes](#eliminar-constantes)
 - [Clase 4 - Cadenas](#clase-4---cadenas)
+  - [Tipo de Dato Char](#tipo-de-dato-char)
+  - [Tipo de Dato Cadena](#tipo-de-dato-cadena)
+  - [Recorrido de una Cadena](#recorrido-de-una-cadena)
+  - [Funciones de la libreria `string.h`](#funciones-de-la-libreria-stringh)
 - [Clase 5 - Memoria Dinamica](#clase-5---memoria-dinamica)
+  - [Sección de Memoria de la CPU](#sección-de-memoria-de-la-cpu)
+  - [Uso Practico de la Memoria Dinamica](#uso-practico-de-la-memoria-dinamica)
+  - [Uso Practico con Matrices](#uso-practico-con-matrices)
+- [Clase 6](#clase-6)
+  - [Reservar Espacio ya Asignado](#reservar-espacio-ya-asignado)
+  - [Macros](#macros)
+  - [Argumentos al Main](#argumentos-al-main)
+  - [Función con Tipo de Dato Universal](#función-con-tipo-de-dato-universal)
+  - [Copiar Bloque de Memoria](#copiar-bloque-de-memoria)
+
 
 ## Parciales
 
@@ -65,6 +95,7 @@ El 1° bit indica el signo
 |unsigned char|%hhu|8|[0 ; 255]|
 |unsigned short int|%hu|16|[0 ; 65,536]|
 |unsigned int|%u|32|[0 ; 4,294,967,295]|
+|size_t |%u|32|[0 ; 4,294,967,295]|
 |unsigned long long int|%llu|64|[0 ; 18,446,744,073,709,551,615]|
 
 - **Numeros Flotantes**
@@ -379,7 +410,7 @@ La representación comun indicamos el texto mediante comillas dobles y el tamañ
 char cad[] = "Hola";
 ~~~
 
-Se puede hacer el uso de punteros pero no es recomendao. por que crea la cadena de manera constante (no puede ser modificada en ningun sentido). Ejemplo:
+Se puede hacer el uso de punteros pero no es recomendao. Por que crea la cadena de manera constante (no puede ser modificada en ningun sentido). Ejemplo:
 
 ~~~c
 char *cad = "Hola";
@@ -634,20 +665,46 @@ La ventaja de usar este método es que podemos definir un tamaño diferente de c
 
 ## Reservar Espacio ya Asignado
 
-`realloc()` se utiliza para cambiar el tamaño de un bloque de memoria previamente asignado por malloc sin perder memoria. Recibe como primer parametro el puntero de memoria ya asignado y segundo el espacio nuevo que puede ser mayor o menor que la original.
+`realloc()` se utiliza para redimensionar el tamaño de un bloque de memoria previamente asignado por malloc sin perder memoria. Recibe como primer parametro el puntero de memoria ya asignado y segundo el espacio nuevo que puede ser mayor o menor que la original:
+
+~~~c
+void *realloc(void *ptr, size_t new_size);
+~~~
+
+- **ptr**: Un puntero a un bloque de memoria previamente asignado.
+- **new_size**: El nuevo tamaño que se desea para el bloque de memoria en bytes.
+
 
 ## Macros
 
-El compilador al ver un codigo escrito con hash `#`, lo que hace es copiar y pegar el contenido o el contenido de ese archivo a nuestro archivo donde se lo esta llamando, incluyendo defines e includes.
+El compilador al ver un codigo escrito con hash `# define / include`, lo que hace es copiar y pegar el contenido/archivo, a nuestro archivo donde se lo esta llamando. Las macros pueden ser de 2 tipos:
 
-Con las macros podes escribir funciones en forma lineal haciendo uso de la constante `#define`. Ejemplo:
+- **Macros Simples (constantes)**
+
+Sirven para definir valores constantes que se pueden utilizar en el código. Estas constantes son reemplazadas por su valor literal en el código fuente antes de que el compilador procese el programa:
+
+~~~c
+#define NOMBRE_VALOR valor
+~~~
+
+- **Macros con Parametros (similar a funcion)**
+
+Estas macros pueden aceptar parámetros y se comportan como funciones en tiempo de preprocesamiento. El preprocesador simplemente reemplaza el uso de la macro por el código correspondiente, con los parámetros sustituidos por los valores dados.
+
+~~~c
+#define NOMBRE_MACRO(parametro1, parametro2) (parametro1 + parametro2)
+~~~
+
+Ejemplo:
 
 ~~~c
 # define MAX(X,Y) (X) > (Y) ? (X) : (Y)
 
-printf("el maximo es: %d",MAX(50,10));
-// Resultado = el maximo es 50
+printf("El maximo es: %d",MAX(50,10));
+// Resultado = El maximo es 50
 ~~~
+
+Hay que tener cuidado con el uso de parametros, siempre debemos encapsular con parentesis cada contenido que se le manda como parametro.
 
 ## Argumentos al Main
 
@@ -678,48 +735,98 @@ Es un uso que se le da unicamente a los programadores porque tiene la caracteris
 
 ## Función con Tipo de Dato Universal
 
-Para esto hacemos uso del tipo `void`
+Para esto hacemos uso del tipo de dato puntero generico `void*` para los parametros y retorno, permitiendo pasar diversos datos sin preocuparse por el tipo.
+
+El incremento del puntero debemos hacerlo a mano (el compilador no va a entenderlo), por lo tanto si enviamos a otra función debemos especificar el tamaño del tipo de dato que utiliza, como al igual el incremento de este debe de ser a mano. Ejemplo:
 
 Ejemplo:
 ~~~c
-void *mostrarVector(void *vec, size_t tamanio)
+void* mostrarVector(void *vec, unsigned int longitud, unsigned int tamanio)
 {
-    void *ini = vec;
-    for(int i = 0 ; i < tamanio ; i++)
+    void *fin = vec + longitud * tamanio;
+
+    while(vec < fin)
     {
-        printf("%d"); // Error
-        vec++;
+        printf("%d "); // ERROR
+        vec += tamanio;
     }
-
-    return ini;
-}
-~~~
-
-El problema que tiene es que para mostrar en consola no es posible, por lo que para solucionarlo se le pasa como argumento la dirección de una función que transformara y muestra el tipo de dato especifico, ejemplo:
-
-~~~c
-void mostrarEntero(void *elemento)
-{
-    int a = (int)(*elemento);
-    printf("%d",a);
-}
-
-void *mostrarVector(void *vec, size_t tamanio, void mostrar(void*))
-{
-    void *ini = vec;
-    for(int i = 0 ; i < tamanio ; i++)
-    {
-        mostrar(vec);
-        vec++;
-    }
-
-    return ini;
 }
 
 int main()
 {
-    int vec = {0,1,2,3}, tamanio = 4;
+    int vec[] = {0,1,2,3};
+    size_t  tamanio = sizeof(*vec), longitud = sizeof(vec) / tamanio;
 
-    mostrarVector(vec,tamanio,mostrarEntero);
+    mostrarVector(vec,longitud,tamanio);
+
+    return 0;
 }
 ~~~
+
+El problema que tiene es que para mostrar en consola el valor no es posible, por lo que para solucionarlo se le pasa como argumento la dirección de una función para imprimir ese tipo de dato especifico (mostrarEntero, mostrarChar, etc...). Ejemplo:
+
+~~~c
+void mostrarEntero(void *elemento)
+{
+    int *elementoTransformado = (int*)(elemento);
+    printf("%d",*elementoTransformado);
+}
+
+void* mostrarVector(void *vec, unsigned int longitud, unsigned int tamanio, void mostrar(void*))
+{
+    void *fin = vec + longitud * tamanio;
+
+    while(vec < fin)
+    {
+        mostrar(vec);
+        printf(" ");
+        vec += tamanio;
+    }
+}
+
+int main()
+{
+    int vec[] = {0,1,2,3};
+    size_t  tamanio = sizeof(*vec),
+            longitud = sizeof(vec) / tamanio;
+
+    mostrarVector(vec,longitud,tamanio,mostrarEntero);
+
+    return 0;
+}
+~~~
+
+## Copiar Bloque de Memoria
+
+`memcpy` y `memmove` son funciones utilizada para copiar bloques de memoria de un lugar a otro. Ambas tienen una diferencia pero reciben los mismos parametros:
+
+~~~c
+memcpy(void* destino, const void* origen, size_t num);
+~~~
+
+~~~c
+memmove(void* destino, const void* origen, size_t num);
+~~~
+
+**Parametros:**
+1. **destino**: Puntero al bloque de memoria donde se copiaran los datos 
+2. **origen**: Puntero al bloque de memoria que se copiara
+3. **num**: Numero de bytes a copiar
+
+Retorna el puntero del destino
+
+Ejemplo:
+~~~c
+char origen[20] = "Hola, Mundo!";
+char destino[20];
+unsigned int tamanio = sizeof(char), longitud = longitudCadena(origen) + 1;
+
+memcpy(destino, origen, longitud);  
+
+printf("%s\n",origen);
+printf("%s",destino);
+~~~
+
+La diferencia en ambas funciones es que memcpy no es seguro para areas de memoria que se superponen. Por lo tanto memmove es mas seguro pero memcpy es mas rapido.
+
+El codigo fuente de cada uno:
