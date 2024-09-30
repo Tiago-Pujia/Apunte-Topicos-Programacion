@@ -830,3 +830,38 @@ printf("%s",destino);
 La diferencia en ambas funciones es que memcpy no es seguro para areas de memoria que se superponen. Por lo tanto memmove es mas seguro pero memcpy es mas rapido.
 
 El codigo fuente de cada uno:
+
+~~~c
+void* memcpy(void* destino, void* origen, size_t bytes)
+{
+    unsigned char *d = destino, *o = origen, *fin = origen + bytes;
+
+    while(o < fin)
+    {
+        *d = *o;
+        d ++;
+        o ++;
+    }
+
+    return destino;
+}
+~~~
+
+~~~c
+void* memmove(void* destino, void* origen, size_t bytes)
+{
+    if(destino == origen)
+        return destino;
+
+    void *aux = malloc(bytes);
+
+    if(!aux)
+        return NULL;
+
+    memcpy_p(aux,origen,bytes);
+    memcpy_p(destino,aux,bytes);
+
+    free(aux);
+    return destino;
+}
+~~~
