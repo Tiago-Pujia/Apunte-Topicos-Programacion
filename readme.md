@@ -37,6 +37,11 @@
   - [Argumentos al Main](#argumentos-al-main)
   - [Función con Tipo de Dato Universal](#función-con-tipo-de-dato-universal)
   - [Copiar Bloque de Memoria](#copiar-bloque-de-memoria)
+- [Clase 6](#clase-6-1)
+  - [funcion insertar ordenado generico](#funcion-insertar-ordenado-generico)
+  - [Algoritmo de Ordenamiento (metodo seleccion)](#algoritmo-de-ordenamiento-metodo-seleccion)
+  - [Busqueda Binaria](#busqueda-binaria)
+  - [Estructuras](#estructuras)
 
 
 ## Parciales
@@ -864,4 +869,147 @@ void* memmove(void* destino, void* origen, size_t bytes)
     free(aux);
     return destino;
 }
+~~~
+
+# Clase 6
+
+## funcion insertar ordenado generico
+
+~~~c
+int insertarOrdenado(void *vec, cost void* val, size_t longitud, size_t tamanio, size_t* ce, int comparacion(const void*, const void*))
+{
+    void *ini = vec;
+    if(*ce == tam && comparacion(val,vec+(*ce-1)*tamanio) > 0)
+        return NULL;
+
+    vec = *ce == tam ? vec + *ce * tamanio - 1 : vec+ *ce * tamanio;
+
+    while(vec>ini && comparacion(val,vec-tamanio) < 0)
+    {
+        memcpy(vec,vec-tamanio,tamanio);
+        vec-=tamanio;
+    }
+    memcpy(vec,val,tamanio);
+
+    *ce = (*ce==tam) ? *ce : *ce + 1;
+    return 1;
+}
+~~~
+
+## Algoritmo de Ordenamiento (metodo seleccion)
+
+Metodo recomendado en caso que el vector sea muy grande
+
+Vector a ordenador:
+
+|Vec|7|5|9|2|1|
+|-|-|-|-|-|-|
+|Pos|0|1|2|3|4|
+
+1. Funcion para buscar el elemento menor
+
+~~~c
+void *buscar Menor(const void* vec, size_t ce, size_t tamanio, int comparacion(const void*, const void*))
+{
+
+}
+~~~
+
+1. Funcion de ordear 2 posiciones
+
+~~~c
+void ordenarSeleccion(void* vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+{
+
+}
+~~~
+
+## Busqueda Binaria
+
+Exige que el vector este ordenado, pero es muy eficiente.
+
+Queremos en el siguiente vector buscar el valor 15:
+
+|Vec|3|6|9|12|15|18|
+|-|-|-|-|-|-|-|
+|Pos|0|1|2|3|4|5|
+
+
+1. Nos paramos a la mitad del vector
+
+> |Vec|3|6|9|**12**|15|18|
+> |-|-|-|-|-|-|-|
+> |Pos|0|1|2|**3**|4|5|
+
+2. Comparamos si ese valor a la mitad es mayor o menor al valor a buscar
+
+> 12 < 15
+
+3. Si es mayor se va a la mitad apartir del medio partido, si es mayor se va a la mitad apartir del medio para atras
+
+> |Vec|15|18|
+> |-|-|-|
+> |Pos|4|5|
+
+1. Repetir la misma secuencia hasta encontrar el valor
+
+~~~c
+void *busquedaBinaria(void* buscar, void* vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+~~~
+
+Retorna la direccion si lo encontro y NULL si no lo encontro.
+
+~~~c
+// Datos de prueba
+int vec[] = {3,5,9,12,15};
+int bus[9] = {1,3,4,6,9,11,12,15,18};
+
+for(int i = 0; i < 9; i++)
+    printf("Posicion en Memoria: %u\n",busquedaBinaria(bus[i],vec,5,sizeof(int),comaracionInt));
+~~~
+
+## Estructuras
+
+~~~c
+#define TAM 50
+
+typedef
+{
+    int legajo;
+    char nombre[TAM];
+    float sueldo;
+} EMPLEADO;
+
+int main()
+{
+    // Inicializar
+    EMPLEADO emps[] = 
+    {
+        {10,"Tiago",10.5}, 
+        {20,"Nacho",5.5},  
+        {30,"Rami",1.05}
+    };
+    /*
+    tam EMLEADO = 4 + 50 + 4 = 58 bytes
+    Al final de cada estructura S.O agrega un dato, por lo que no siempre ocupa 58 bytes, por lo que mejor es sizeof(EMPLEADO)
+    */
+
+    // Acceso y Modificacion
+    emps[2].sueldo = 10.7;
+    strcpy(empleado[1].nombre,"Juan"); //memcpy(empleado[1].nombre,"Juan",sizeof(char)*TAM); -> cuidado
+}
+
+void accion(void* ele)
+{
+
+}
+
+// Estructura por funcion
+int aumentarSueldo(EMPLEADO *emp) //Pasar direccion de memoria, porque si no realiza una copia del dato
+{
+    EMPLEADO *he = (EMPLEADO*);
+    // Hacemos uso de flecha para acceder una propiedad de puntero de estructura
+    emp->sueldo += emp.sueldo * 1.10;
+}
+
 ~~~
