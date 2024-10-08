@@ -44,12 +44,12 @@
   - [Estructuras](#estructuras)
     - [Tamaño de la Estructura](#tamaño-de-la-estructura)
     - [Uso de Punteros](#uso-de-punteros)
-  - [Algoritmo de Ordenamiento (metodo seleccion)](#algoritmo-de-ordenamiento-metodo-seleccion-1)
-  - [Busqueda Binaria](#busqueda-binaria-1)
-  - [Estructuras](#estructuras-1)
-    - [Tamaño de la Estructura](#tamaño-de-la-estructura-1)
-    - [Uso de Punteros](#uso-de-punteros-1)
-
+- [Clase 7](#clase-7)
+  - [Tipos de Archivos](#tipos-de-archivos)
+  - [Manipulacion de Archivos](#manipulacion-de-archivos)
+  - [Lectura de Archivos de Texto no Estructurado](#lectura-de-archivos-de-texto-no-estructurado)
+  - [Lectura de Archivos de Texto Estructurado Variable](#lectura-de-archivos-de-texto-estructurado-variable)
+  - [Lectura de Archivos de Texto Estructurado Fijo](#lectura-de-archivos-de-texto-estructurado-fijo)
 
 ## Parciales
 
@@ -590,12 +590,45 @@ strcmp(c1,c2);
 
 - `strncmp`
 
+Se utiliza para comparar los primeros "n" caracteres de dos cadenas.
+
 ~~~c
+int strncmp(const char* str1, const char* str2, size_t bytes)
+{
+    // Mientras ambas cadenas no lleguen al final y queden bytes por comparar
+    while(*str1 && *str2 && bytes)
+    {
+        // Si los caracteres actuales no coinciden, retorna la diferencia
+        if(*str1 != *str2)
+            return *str1 - *str2;
+
+        str1++;     // Avanza al siguiente carácter
+        str2++;     // Avanza al siguiente carácter
+        bytes--;    // Decrementa el número de bytes a comparar
+    }
+
+    // Si una cadena termina antes o no se agotaron los bytes, retorna la diferencia
+    return *str1 - *str2;
+}
 ~~~
 
 - `strncpy`
 
+Se utiliza para copiar hasta "n" caracteres de una cadena a otra.
+
 ~~~c
+void strncpy(char *destino, char *origen, size_t bytes)
+{
+    // Copia cada carácter de 'origen' a 'destino' mientras no sea el carácter nulo.
+    while(*origen && bytes)
+    {
+        *destino = *origen; // Asigna el carácter actual de 'origen' a 'destino'.
+        destino++;          // Avanza el puntero 'destino'.
+        origen++;           // Avanza el puntero 'origen'.
+        bytes--;
+    }
+    *destino = '\0'; // Añade el carácter nulo al final de la cadena copiada.
+}
 ~~~
 
 - `strstr`
@@ -907,7 +940,7 @@ void* memcpy(void* destino, const void* origen, size_t bytes)
     if (destino == origen)
         return destino;
 
-    // Declara punteros para recorrer el destino y el origen como bytes (unsigned char).
+    // Declara punteros para recorrer el destino y el origen como bytes.
     unsigned char *d = destino;
     const unsigned char *o = origen;
     
@@ -1191,214 +1224,60 @@ int aumentarSueldo(EMPLEADO *emp)
     emp->sueldo += emp.sueldo * 1.10;
 }
 ~~~
-~~~
 
-# Clase 6
+# Clase 7
 
-## funcion insertar ordenado generico
+"Hacer uso de la libreria qsort para ordenamiento"
 
-~~~c
-int comparacionInt(void* el1, void* el2)
-{
-    int *elInt1 = (int*)(el1), *elInt2 = (int*)(el2);
-    return *elInt1 - *elInt2;
-}
+Es un concepto en todo lenguaje de alto nivel no solo en C. Necesitamos una memoria auxiliar, para esto vamos a hacer uso de archivo.
 
-int instVecOrd(void *vec, size_t longitud, size_t tamanio, size_t *ce, int comparacion(void*,void*), void* ingresar)
-{
-    if(*ce >= longitud && comparacion(ingresar,vec + (*ce-1) * tamanio) > 0)
-        return NULL; // Si el array está lleno y el valor es mayor que el último, no inserta
+## Tipos de Archivos
 
-    void *ini = vec; // Puntero al inicio del array
-    vec += *ce == longitud ? *ce * tamanio - 1 : *ce * tamanio; // Puntero al final del array
+- Textos
+  - No estructurado: cadena de gran tamaño.
+  - Estructurado: Tipo utilizado para base de datos
+    - Campo Variable: No hay un espacio reservado para cada campo, CSV es un ejemplo.
+    - Campo Fijo: Cada campo tiene N bytes fijos.
+- Binarios
+  - Campo Fijo: Estructuras C (tipo mas eficiente)
+  - Campo Variable (no se utiliza), audios es un ejemplo
 
-    while(vec > ini && comparacion(ingresar, vec - tamanio) < 0) // Recorre desde el final hacia el inicio buscando la posición correcta
-    {
-        memcpy(vec, vec - tamanio, tamanio);
-        vec -= tamanio;
-    }
+## Manipulacion de Archivos
 
-    memcpy(vec, ingresar, tamanio); // Inserta el nuevo valor en su posición
-    if(*ce < longitud) (*ce)++; // Actualiza el contador de elementos
+**Funciones Globales:**
+- fopen("*nombre-txt*",*modo apertura*)
 
-    return 1; // Indica que la inserción fue exitosa
-}
-~~~
+Abrir archivo. Modo que se utilizan: "w" y "r"
 
-## Algoritmo de Ordenamiento (metodo seleccion)
-
-Metodo recomendado en caso que el vector sea muy grande
-
-Vector a ordenador:
-
-|Vec|7|5|9|2|1|
-|-|-|-|-|-|-|
-|Pos|0|1|2|3|4|
-
-1. Funcion para buscar el elemento menor
-
-~~~c
-void intercambiarElementos(void *el1, void *el2, size_t tamanio)
-{
-    char aux;
-    size_t i;
-    for (i = 0; i < tamanio; i++)
-    {
-        aux = *(char*)el2;
-        *(char*)el2 = *(char*)el1;
-        *(char*)el1 = aux;
-        el1++;
-        el2++;
-    }
-}
-
-// Función que busca el menor elemento en el vector a partir de una posición dada
-void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
-{
-    void *elementoMenor = vec; // Puntero al menor elemento encontrado
-    void *finVec = vec + tamanio * longitud;
-
-    vec += tamanio; // Puntero al elemento actual
-
-    // Itera por cada elemento del vector comparando cuál es menor
-    while(vec < finVec)
-    {
-        if (comparacion(vec, elementoMenor) < 0)
-            elementoMenor = vec;
-        vec += tamanio; // Avanza al siguiente elemento
-    }
-
-    return elementoMenor; // Retorna la dirección del menor elemento
-}
-
-// Función que ordena un vector usando el método de selección con lógica genérica
-void ordenarSeleccion(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
-{
-    size_t i;
-    void *elementoMenor;
-
-    // Itera por cada elemento del vector para buscar su posición correcta
-    for (i = 0; i < longitud; i++)
-    {
-        // Busca el menor elemento a partir de la posición actual
-        elementoMenor = buscarElementoMenor(vec, longitud - i, tamanio, comparacion);
-        
-        // Si el menor elemento no está en la posición actual, intercambia
-        if (elementoMenor != vec)
-            intercambiarElementos(elementoMenor, vec, tamanio);
-        
-        // Avanza al siguiente elemento
-        vec += tamanio; 
-    }
-}
-~~~
-
-## Busqueda Binaria
-
-- **Explicacion:**
-
-Exige que el vector este ordenado, pero es muy eficiente.
-
-Queremos en el siguiente vector buscar el valor 15:
-
-|Vec|3|6|9|12|15|18|
-|-|-|-|-|-|-|-|
-|Pos|0|1|2|3|4|5|
+- fclose
+- remove
+- rename
+- fputs
 
 
-1. Nos paramos a la mitad del vector (pos 3)
+**Funciones Texto:**
+- fgets
+- fscanf
+- fprintf
+- sscanf
+- sfprintf
 
-> |Vec|3|6|9|**12**|15|18|
-> |-|-|-|-|-|-|-|
-> |Pos|0|1|2|**3**|4|5|
+**Funciones Binario:**
+- fread
+- fwrite
+- fcof
+- fseek
+- ftell
+- rewind
 
-2. Comparamos si ese valor a la mitad es mayor o menor al valor a buscar
+## Lectura de Archivos de Texto no Estructurado
 
-> 12 < 15
+## Lectura de Archivos de Texto Estructurado Variable
 
-3. Si es mayor se va a la mitad apartir del medio partido, si es mayor se va a la mitad apartir del medio para atras
+- Manera Manual (recomendado)
 
-> |Vec|15|18|
-> |-|-|-|
-> |Pos|4|5|
+Hacemos uso del scanf para leer cada campo
 
-4. Repetir la misma secuencia hasta encontrar el valor
+- Manera Automatica
 
-- **Codigo:**
-
-~~~c
-void* busquedaBinaria(void* buscar, void* vec, size_t longitud, size_t tamanio, int cmp(const void*, const void*)) {
-    // Inicializa los punteros de inicio y fin que delimitan el rango de búsqueda
-    void *mitad;                                // Puntero a la posición central actual
-    void *inicio = vec;                         // Puntero al primer elemento del array
-    void *fin = vec + (longitud - 1) * tamanio; // Puntero al último elemento del array
-    int resCmp;                                 // Variable para almacenar el resultado de la comparación
-    
-    // El bucle continúa mientras el puntero de inicio no supere al puntero de fin
-    while (inicio <= fin) {
-        // Calcula la dirección de la mitad del rango actual utilizando aritmética de punteros
-        mitad = inicio + ((fin - inicio) / (2 * tamanio)) * tamanio;
-        
-        // Compara el valor buscado con el valor en la posición de mitad
-        resCmp = cmp(buscar, mitad);
-        
-        // Si la comparación da cero, significa que hemos encontrado el valor
-        if (resCmp == 0)
-            return mitad;  // Devuelve el puntero al valor encontrado
-
-        // Si el valor buscado es menor que el valor en la posición de mitad
-        else if (resCmp < 0)
-            fin = mitad - tamanio;  // Ajusta el puntero de fin para reducir la búsqueda a la mitad inferior
-
-        // Si el valor buscado es mayor que el valor en la posición de mitad
-        else
-            inicio = mitad + tamanio;  // Ajusta el puntero de inicio para reducir la búsqueda a la mitad superior
-    }
-    
-    // Si el bucle termina sin encontrar el valor, se retorna NULL
-    return NULL;
-}
-~~~
-
-Podemos hacer una prueba de la funcion con el codigo:
-
-~~~c
-int vec[] = {3,5,9,12,15};
-int bus[] = {1,3,4,6,9,11,12,15,18};
-
-for(int i = 0; i < sizeof(bus)/sizeof(*bus); i++)
-    printf("~ Posicion en Memoria: %u\n",busquedaBinaria(bus+i,vec,sizeof(vec)/sizeof(*vec),sizeof(*vec),comparacionInt));
-~~~
-
-## Estructuras
-
-### Tamaño de la Estructura
-
-Las estructuras se siguen declarando de la misma manera, recordando que se debe tener cuidado al momento de contar a mano la cantidad de bytes que ocupa, debido que al final de cada estructura el S.O agrega un dato. Ejemplo:
-
-~~~c
-#define TAM 50
-
-typedef
-{
-    int legajo;
-    char nombre[TAM];
-    float sueldo;
-} EMPLEADO;
-
-// sizeof(EMPLEADO) != 4(int) + 50(char[50]) + 4(float) = 58 bytes
-~~~
-
-### Uso de Punteros
-
-Se le puede pasar como argumento a una funcion la dirección de memoria de la estructura, con el fin de no duplicar el dato que se utilizara y ahorrar recursos. La manipulacion del mismo con punteros es el mismo ya conocido, la unica diferencia es que para acceder a una propiedad mediante la direccion de memoria se utiliza la sintaxis de flecha `->` y no la del punto. Ejemplo:
-
-~~~c
-//Pasar direccion de memoria, porque si no realiza una copia del dato
-int aumentarSueldo(EMPLEADO *emp) 
-{
-    EMPLEADO *he = (EMPLEADO*);
-    // Hacemos uso de flecha para acceder una propiedad de puntero de estructura
-    emp->sueldo += emp.sueldo * 1.10;
-}
-~~~
+## Lectura de Archivos de Texto Estructurado Fijo
