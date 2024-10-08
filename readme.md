@@ -44,6 +44,11 @@
   - [Estructuras](#estructuras)
     - [Tamaño de la Estructura](#tamaño-de-la-estructura)
     - [Uso de Punteros](#uso-de-punteros)
+  - [Algoritmo de Ordenamiento (metodo seleccion)](#algoritmo-de-ordenamiento-metodo-seleccion-1)
+  - [Busqueda Binaria](#busqueda-binaria-1)
+  - [Estructuras](#estructuras-1)
+    - [Tamaño de la Estructura](#tamaño-de-la-estructura-1)
+    - [Uso de Punteros](#uso-de-punteros-1)
 
 
 ## Parciales
@@ -163,7 +168,6 @@ Para poder realizar eso querido debemos:
 void miFuncion(int *valor)
 {
     *valor = 'U'; // Modificamos el valor original
-    printf("Valor: %c\n",*valor);
 }
 
 int main()
@@ -172,8 +176,6 @@ int main()
 
     miFuncion(&valor); // Pasamos la dirección como argumento
     printf("Valor: %c\n",valor);
-
-    return 0;
 }
 ~~~
 ~~~
@@ -198,9 +200,12 @@ El tipo int ocupa 4 bytes. Por lo tanto reservamos 5*4(bytes)=20 bytes.
 
 Es buena practica definir el tamaño del array mediante constantes define. Ejemplo:
 ~~~c
-#define TAM 5
+#define TAM 50
 
-int vector[TAM];
+int vector[TAM] = {4,3,6};
+size_t cantEl = 3;
+
+mostrarVec(vec,cantEl);
 ~~~
 
 ## Retornar Tamaño
@@ -215,7 +220,7 @@ sizeof retorna tamaño, en este caso el tamaño del vector (5*4=20) y del tipo i
 
 Debemos hacer el uso aritemtica de punteros en cadenas y arrays, y evitar utilizar subindices. Para esto, indicamos con el puntero la posición del inicio `*vec` y despues en el ciclo lo vamos incrementando `vec++`. Ejemplo:
 ~~~c
-void mostrarVectorEntero(int *vec, int tamanio)
+void mostrarVectorEntero(int *vec, size_t longitud)
 {
     int *fin = vec + tamanio;
 
@@ -260,17 +265,17 @@ La optimización de la manera de recorrer las matrices es muy importante.
 ![imagen](imgs/matrizTriangular.png)
 
 ~~~c
-int i, j;
+size_t i, j;
 
 // Recorrido de Matriz Triangular
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++)
-        printf("%d ",*(*(matriz+i)+j));
+        printf("%d ",matriz[i][j]);
 
 // Recorrido de Matriz Triangular + Diagonal Principal
 for(i = 0 ; i < tamanio ; i++)
-        for(j = 0 ; j <= i ; j++)
-            printf("%d ",*(*(matriz+i)+j));
+    for(j = 0 ; j <= i ; j++)
+        printf("%d ",matriz[i][j]);
 ~~~
 
 También podemos utilizar una técnica llamada _Matriz Espejada_, en la que podemos acceder a la casilla espejo de la posición en la que nos encontramos para diferentes usos. Solo necesitamos intercambiar `i (F)` y `j (C)` al recorrer la matriz de manera triangular.
@@ -280,8 +285,8 @@ También podemos utilizar una técnica llamada _Matriz Espejada_, en la que pode
 ~~~c
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++){
-        printf("Valor: %d" , *(*(matriz+i)+j) );
-        printf("Espejado: %d" , *(*(matriz+j)+i) );
+        printf("Valor: %d" , matriz[i][j] );
+        printf("Espejado: %d" , matriz[j][i] );
     }
 ~~~
 
@@ -292,16 +297,17 @@ La matriz identidad es aquella donde solo tiene 0 en todas las casillas y 1 en l
 ![imagen](imgs/matrizIdentidad.png)
 
 ~~~c
-int i, j;
+size_t i, j;
+
 // Chequear Diagonal Principal
 for(i = 0 ; i < f ; i++)
-    if(1 != *(*(matriz+i)+i))
+    if(1 != matriz[i][i])
         return 0;
 
 // Chequear Triangulos con Espejado
 for(i = 1 ; i < f ; i++)
     for(j = 0 ; j < i ; j++)
-        if(0 != *(*(matriz+i)+j) || 0 != *(*(matriz+j)+i))
+        if(0 != matriz[i][j] || 0 != matriz[j][i])
             return 0;
 
 return 1;
@@ -328,20 +334,19 @@ La optimización para transponer una matriz cuadrada consiste en aprovechar el r
 
 ~~~c
 void transponerMatriz(char matriz[][COL_MAX], int tamanio) {
-    int i, j;
+    size_t i, j;
     char aux;
 
     // Recorre la matriz de manera triangular
     for(i = 1 ; i < tamanio ; i++)
-    {
         for(j = 0 ; j < i ; j++)
         {
-            // Intercambia los elementos de forma espejada con una variable auxiliar
-            aux = *(*(matriz+i)+j);
-            *(*(matriz+i)+j) = *(*(matriz+j)+i);
-            *(*(matriz+j)+i) = aux;
+            // Intercambia los elementos de forma 
+            // espejada con una variable auxiliar
+            aux = matriz[i][j];
+            matriz[i][j] = matriz[j][i]:
+            matriz[j][j] = aux;
         }
-    }
 }
 ~~~
 
@@ -371,7 +376,7 @@ Una opción posible es poner una constante de tamaño maximo con un numero muy g
 #define MAX_COL 50
 #define MAX_FIL 50
 
-// Como una matriz identidad es siempre cuadrada, tan solo le pasamos un parametro
+// Una matriz identidad es siempre cuadrada, tan solo le pasamos un parametro
 void es_identidad(int matriz[][MAX_COL],int tamanio);
 
 int main()
@@ -453,11 +458,16 @@ Las funciones de las librerias tendran que ser creadas a mano, no estara permiti
 Devuelve la longitud de una cadena.
 
 ~~~c
-int strlen(char* str)
+size_t strlen(char* str)
 {
+    // Guarda la dirección inicial del string en el puntero 'ini'.
     const char* ini = str;
+
+    // Recorre el string hasta llegar al carácter nulo '\0'.
     while(*str)
         str++;
+
+    // Calcula la longitud restando la dirección inicial de la final.
     return str-ini;
 }
 ~~~
@@ -469,18 +479,25 @@ Concatena/Añande una cadena detras de otra, uniendolas.
 ~~~c
 char* strcat(char *destino, char *origen)
 {
+    // Guarda la dirección inicial del destino para retornarla al final.
     char *ini = destino;
+
+    // Avanza el puntero 'destino' hasta el final de la cadena actual.
     while(*destino)
         destino++;
-    
+
+    // Copia los caracteres de 'origen' a 'destino' hasta encontrar el carácter nulo.
     while(*origen)
     {
-        *destino = *origen;
-        destino++;
-        origen++;
+        *destino = *origen; // Asigna el carácter actual de 'origen' a 'destino'.
+        destino++;          // Avanza el puntero 'destino'.
+        origen++;           // Avanza el puntero 'origen'.
     }
 
+    // Añade el carácter nulo al final de la nueva cadena concatenada.
     *destino = '\0';
+
+    // Retorna el puntero inicial de 'destino'.
     return ini;
 }
 ~~~
@@ -492,13 +509,14 @@ Realiza una copia del contenido de un string a otro string.
 ~~~c
 void strcpy(char *destino, char *origen)
 {
+    // Copia cada carácter de 'origen' a 'destino' mientras no sea el carácter nulo.
     while(*origen)
     {
-        *destino = *origen;
-        destino++;
-        origen++;
+        *destino = *origen; // Asigna el carácter actual de 'origen' a 'destino'.
+        destino++;          // Avanza el puntero 'destino'.
+        origen++;           // Avanza el puntero 'origen'.
     }
-    *destino = '\0';
+    *destino = '\0'; // Añade el carácter nulo al final de la cadena copiada.
 }
 ~~~
 
@@ -509,13 +527,13 @@ Se utiliza para buscar la primera aparición de un carácter
 ~~~c
 int strchr(char *str, const char buscar)
 {
-    const char *ini = str;
-    while (*str) {
-        if (*str == buscar)
-            return str-ini;
-        str++;
+    const char *ini = str; // Guarda el puntero inicial de la cadena.
+    while (*str) { // Itera mientras no se alcance el carácter nulo.
+        if (*str == buscar) // Si el carácter actual es igual a 'buscar'.
+            return str - ini; // Retorna la posición relativa en la cadena.
+        str++; // Avanza el puntero a la siguiente posición.
     }
-    return -1;
+    return -1; // Si no se encuentra el carácter, retorna -1.
 }
 ~~~
 
@@ -526,14 +544,20 @@ Se utiliza para buscar la ultima aparición de un carácter
 ~~~c
 int strrchr(char *str, const char buscar)
 {
-    int posicion = -1;
-    const char *ini = str;
+    int posicion = -1;  // Inicializa la posición como -1
+    const char *ini = str; // Guarda la dirección inicial de la cadena
+
+    // Recorre la cadena hasta que se llega al final ('\0')
     while (*str) {
+        // Si el carácter actual es el buscado, actualiza la posición
         if (*str == buscar)
-            posicion = str-ini;
-        str++;
+            posicion = str - ini; // Calcula la posición actual del carácter buscado
+
+        str++; // Avanza al siguiente carácter de la cadena
     }
-    return posicion;
+
+    // Retorna la última posición encontrada, o -1 si no se encontró
+    return posicion; 
 }
 ~~~
 
@@ -545,16 +569,23 @@ Compara 2 cadenas y devuelve el resultado, estos pueden ser:
 - str1 < str2 => Numero Negativo
 
 ~~~c
-int strcmp(const char *str1,const char *str2)
+int strcmp(const char *str1, const char *str2)
 {
+    // Compara los caracteres de ambas cadenas mientras sean iguales y no lleguen al final.
     while(*str1 == *str2 && *str1 && *str2)
     {
-        str1++;
-        str2++;
+        str1++; // Avanza en la cadena 1.
+        str2++; // Avanza en la cadena 2.
     }
 
-    return *str1 - *str2;
+    return *str1 - *str2; // Retorna la diferencia entre los primeros caracteres diferentes.
 }
+
+char c1 = "Alo A",
+     c2 = "Alo B";
+strcmp(c1,c2);
+// Resultado = A(65) - B(66) = -1
+
 ~~~
 
 - `strncmp`
@@ -570,6 +601,10 @@ int strcmp(const char *str1,const char *str2)
 - `strstr`
 
 ~~~c
+char* strstr(const char *str1, const char *str2)
+{
+
+}
 ~~~
 
 ---
@@ -608,13 +643,14 @@ La ventaja de este método es que, cuando una variable o función finaliza, se l
 
 ~~~c
 int *pi; // Creamos nuestra variable tipo puntero
-pi = malloc(sizeof(int)); // Apuntamos hacia una dirección de memoria dinamica
+pi = malloc(sizeof(int)); // Apuntamos hacia una dirección heap
 
-if(pi != NULL) // Chequear que retorno una dirección de memoria
+// Chequear que retorno una dirección de memoria
+if(pi != NULL) 
 {
     *pi = 7;
     // ... Hacemos lo que queramos con ella
-    printf("Valor asignado %d en la direccion %p",*pi,pi); // Tipo %p para imprimir una dirección de memoria
+    printf("Valor asignado %d en la direccion %u",*pi,pi);
 } 
     
 free(pi); // Liberamos la memoria
@@ -641,14 +677,17 @@ void liberarMatriz(int** matriz, const int filas) {
 Usamos malloc inicialmente para crear la matriz, reservando espacio para el arreglo de punteros a filas (int*). Luego, recorremos cada fila y reservamos espacio en memoria según la cantidad de columnas. Es importante siempre verificar si hay errores durante la asignación de memoria.
 
 ~~~c
-int **crearMatriz(int filas, int columnas)
+int **crearMatrizInt(size_t filas, size_t columnas)
 {
-    int i, j, **matriz = (int**) malloc(filas * sizeof(int*));
+    size_t i, j;
+    int **matriz = (int**) malloc(filas * sizeof(int*));
 
-    if(matriz == NULL) // Verificar si se retorno la dirección
+    // Verificar si se retorno la dirección
+    if(matriz == NULL) 
         return NULL;
     
-    for(i = 0;i < filas; i++) // asignamos memoria para cada fila (columnas)
+    // asignamos memoria para cada fila (columnas)
+    for(i = 0; i < filas ; i++) 
     {
         *(matriz+i) = (int*) malloc(columnas * sizeof(int));
 
@@ -681,6 +720,28 @@ void *realloc(void *ptr, size_t new_size);
 - **ptr**: Un puntero a un bloque de memoria previamente asignado.
 - **new_size**: El nuevo tamaño que se desea para el bloque de memoria en bytes.
 
+~~~c
+// Reserva inicial de memoria
+int *arr = (int*) malloc(5 * sizeof(int));
+
+// Asignar valores
+for (int i = 0; i < 5; i++)
+    arr[i] = i + 1; // 1, 2, 3, 4, 5
+
+// Aumentar el tamaño a 10
+arr = (int*) realloc(arr, 10 * sizeof(int));
+
+// Inicializar nuevos valores
+for (int i = 5; i < 10; i++)
+    arr[i] = i + 1; // 6, 7, 8, 9, 10
+
+// Imprimir valores
+for (int i = 0; i < 10; i++)
+    printf("%d ", arr[i]);
+
+// Liberar memoria
+free(arr);
+~~~
 
 ## Macros
 
@@ -748,7 +809,7 @@ El incremento del puntero debemos hacerlo a mano (el compilador no va a entender
 
 Ejemplo:
 ~~~c
-void* mostrarVector(void *vec, unsigned int longitud, unsigned int tamanio)
+void mostrarVector(void *vec, size_t longitud, size_t tamanio)
 {
     void *fin = vec + longitud * tamanio;
 
@@ -779,7 +840,7 @@ void mostrarEntero(void *elemento)
     printf("%d",*elementoTransformado);
 }
 
-void* mostrarVector(void *vec, unsigned int longitud, unsigned int tamanio, void mostrar(void*))
+void* mostrarVector(void *vec, size_t longitud, size_t tamanio, void mostrar(void*))
 {
     void *fin = vec + longitud * tamanio;
 
@@ -789,6 +850,7 @@ void* mostrarVector(void *vec, unsigned int longitud, unsigned int tamanio, void
         printf(" ");
         vec += tamanio;
     }
+    printf("\n");
 }
 
 int main()
@@ -808,7 +870,7 @@ int main()
 `memcpy` y `memmove` son funciones utilizada para copiar bloques de memoria de un lugar a otro. Ambas tienen una diferencia pero reciben los mismos parametros:
 
 ~~~c
-memcpy(void* destino, const void* origen, size_t num);
+void* memcpy(void* destino, const void* origen, size_t num);
 ~~~
 
 ~~~c
@@ -839,37 +901,84 @@ La diferencia en ambas funciones es que memcpy no es seguro para areas de memori
 El codigo fuente de cada uno:
 
 ~~~c
-void* memcpy(void* destino, void* origen, size_t bytes)
+void* memcpy(void* destino, const void* origen, size_t bytes)
 {
-    unsigned char *d = destino, *o = origen, *fin = origen + bytes;
+    // Si destino y origen son iguales, no hay nada que hacer.
+    if (destino == origen)
+        return destino;
 
+    // Declara punteros para recorrer el destino y el origen como bytes (unsigned char).
+    unsigned char *d = destino;
+    const unsigned char *o = origen;
+    
+    // Calcula la dirección final del bloque de memoria que se copiará.
+    const unsigned char *fin = o + bytes;
+
+    // Copia byte por byte desde 'origen' a 'destino' hasta llegar al final.
     while(o < fin)
     {
-        *d = *o;
-        d ++;
-        o ++;
+        *d = *o;  // Copia el byte actual de origen a destino.
+        d++;      // Avanza el puntero de destino.
+        o++;      // Avanza el puntero de origen.
     }
 
+    return destino; // Retorna el puntero al bloque de destino.
+}
+~~~
+
+~~~c
+void* memmove(void* destino, const void* origen, size_t bytes)
+{
+    // Si destino y origen son iguales, no hay nada que hacer.
+    if (destino == origen)
+        return destino;
+
+    // Reserva un bloque de memoria auxiliar del tamaño de 'bytes'.
+    void *aux = malloc(bytes);
+
+    // Verifica si la reserva de memoria fue exitosa.
+    if (!aux)
+        return NULL;  // Si no se pudo asignar memoria, retorna NULL.
+
+    // Copia los datos del origen a la memoria auxiliar.
+    memcpy(aux, origen, bytes);
+
+    // Copia los datos de la memoria auxiliar al destino.
+    memcpy(destino, aux, bytes);
+
+    // Libera la memoria auxiliar.
+    free(aux);
+
+    // Retorna el puntero al bloque de memoria destino.
     return destino;
 }
 ~~~
 
 ~~~c
-void* memmove(void* destino, void* origen, size_t bytes)
+int memcmp(const void *dir1, const void *dir2, size_t bytes)
 {
-    if(destino == origen)
-        return destino;
+    // Convertimos los punteros a char para hacer comparaciones byte a byte.
+    const unsigned char *dirChar1 = dir1;
+    const unsigned char *dirChar2 =  dir2;
 
-    void *aux = malloc(bytes);
+    // Calculamos el final de la región a comparar.
+    const unsigned char *fin = dirChar1 + bytes; 
 
-    if(!aux)
-        return NULL;
+    // Recorremos byte a byte las dos regiones de memoria.
+    while (dirChar1 < fin)
+    {
+        // Comparamos los bytes de ambas direcciones.
+        if (*dirChar1 != *dirChar2)
+            // Retorna la diferencia si los bytes son distintos.
+            return *dirChar1 - *dirChar2; 
 
-    memcpy_p(aux,origen,bytes);
-    memcpy_p(destino,aux,bytes);
+        // Avanzamos al siguiente byte.
+        dirChar1++;
+        dirChar2++;
+    }
 
-    free(aux);
-    return destino;
+    // Si todas las comparaciones fueron iguales, retornamos 0.
+    return 0;
 }
 ~~~
 
@@ -918,17 +1027,17 @@ Vector a ordenador:
 1. Funcion para buscar el elemento menor
 
 ~~~c
-void intercambiarElementos(void *elementoA, void *elementoB, size_t tamanio)
+void intercambiarElementos(void *el1, void *el2, size_t tamanio)
 {
     char aux;
     size_t i;
     for (i = 0; i < tamanio; i++)
     {
-        aux = *(char*)elementoB;
-        *(char*)elementoB = *(char*)elementoA;
-        *(char*)elementoA = aux;
-        elementoA++;
-        elementoB++;
+        aux = *(char*)el2;
+        *(char*)el2 = *(char*)el1;
+        *(char*)el1 = aux;
+        el1++;
+        el2++;
     }
 }
 
@@ -1074,7 +1183,219 @@ typedef
 Se le puede pasar como argumento a una funcion la dirección de memoria de la estructura, con el fin de no duplicar el dato que se utilizara y ahorrar recursos. La manipulacion del mismo con punteros es el mismo ya conocido, la unica diferencia es que para acceder a una propiedad mediante la direccion de memoria se utiliza la sintaxis de flecha `->` y no la del punto. Ejemplo:
 
 ~~~c
-int aumentarSueldo(EMPLEADO *emp) //Pasar direccion de memoria, porque si no realiza una copia del dato
+//Pasar direccion de memoria, porque si no realiza una copia del dato
+int aumentarSueldo(EMPLEADO *emp) 
+{
+    EMPLEADO *he = (EMPLEADO*);
+    // Hacemos uso de flecha para acceder una propiedad de puntero de estructura
+    emp->sueldo += emp.sueldo * 1.10;
+}
+~~~
+~~~
+
+# Clase 6
+
+## funcion insertar ordenado generico
+
+~~~c
+int comparacionInt(void* el1, void* el2)
+{
+    int *elInt1 = (int*)(el1), *elInt2 = (int*)(el2);
+    return *elInt1 - *elInt2;
+}
+
+int instVecOrd(void *vec, size_t longitud, size_t tamanio, size_t *ce, int comparacion(void*,void*), void* ingresar)
+{
+    if(*ce >= longitud && comparacion(ingresar,vec + (*ce-1) * tamanio) > 0)
+        return NULL; // Si el array está lleno y el valor es mayor que el último, no inserta
+
+    void *ini = vec; // Puntero al inicio del array
+    vec += *ce == longitud ? *ce * tamanio - 1 : *ce * tamanio; // Puntero al final del array
+
+    while(vec > ini && comparacion(ingresar, vec - tamanio) < 0) // Recorre desde el final hacia el inicio buscando la posición correcta
+    {
+        memcpy(vec, vec - tamanio, tamanio);
+        vec -= tamanio;
+    }
+
+    memcpy(vec, ingresar, tamanio); // Inserta el nuevo valor en su posición
+    if(*ce < longitud) (*ce)++; // Actualiza el contador de elementos
+
+    return 1; // Indica que la inserción fue exitosa
+}
+~~~
+
+## Algoritmo de Ordenamiento (metodo seleccion)
+
+Metodo recomendado en caso que el vector sea muy grande
+
+Vector a ordenador:
+
+|Vec|7|5|9|2|1|
+|-|-|-|-|-|-|
+|Pos|0|1|2|3|4|
+
+1. Funcion para buscar el elemento menor
+
+~~~c
+void intercambiarElementos(void *el1, void *el2, size_t tamanio)
+{
+    char aux;
+    size_t i;
+    for (i = 0; i < tamanio; i++)
+    {
+        aux = *(char*)el2;
+        *(char*)el2 = *(char*)el1;
+        *(char*)el1 = aux;
+        el1++;
+        el2++;
+    }
+}
+
+// Función que busca el menor elemento en el vector a partir de una posición dada
+void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+{
+    void *elementoMenor = vec; // Puntero al menor elemento encontrado
+    void *finVec = vec + tamanio * longitud;
+
+    vec += tamanio; // Puntero al elemento actual
+
+    // Itera por cada elemento del vector comparando cuál es menor
+    while(vec < finVec)
+    {
+        if (comparacion(vec, elementoMenor) < 0)
+            elementoMenor = vec;
+        vec += tamanio; // Avanza al siguiente elemento
+    }
+
+    return elementoMenor; // Retorna la dirección del menor elemento
+}
+
+// Función que ordena un vector usando el método de selección con lógica genérica
+void ordenarSeleccion(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+{
+    size_t i;
+    void *elementoMenor;
+
+    // Itera por cada elemento del vector para buscar su posición correcta
+    for (i = 0; i < longitud; i++)
+    {
+        // Busca el menor elemento a partir de la posición actual
+        elementoMenor = buscarElementoMenor(vec, longitud - i, tamanio, comparacion);
+        
+        // Si el menor elemento no está en la posición actual, intercambia
+        if (elementoMenor != vec)
+            intercambiarElementos(elementoMenor, vec, tamanio);
+        
+        // Avanza al siguiente elemento
+        vec += tamanio; 
+    }
+}
+~~~
+
+## Busqueda Binaria
+
+- **Explicacion:**
+
+Exige que el vector este ordenado, pero es muy eficiente.
+
+Queremos en el siguiente vector buscar el valor 15:
+
+|Vec|3|6|9|12|15|18|
+|-|-|-|-|-|-|-|
+|Pos|0|1|2|3|4|5|
+
+
+1. Nos paramos a la mitad del vector (pos 3)
+
+> |Vec|3|6|9|**12**|15|18|
+> |-|-|-|-|-|-|-|
+> |Pos|0|1|2|**3**|4|5|
+
+2. Comparamos si ese valor a la mitad es mayor o menor al valor a buscar
+
+> 12 < 15
+
+3. Si es mayor se va a la mitad apartir del medio partido, si es mayor se va a la mitad apartir del medio para atras
+
+> |Vec|15|18|
+> |-|-|-|
+> |Pos|4|5|
+
+4. Repetir la misma secuencia hasta encontrar el valor
+
+- **Codigo:**
+
+~~~c
+void* busquedaBinaria(void* buscar, void* vec, size_t longitud, size_t tamanio, int cmp(const void*, const void*)) {
+    // Inicializa los punteros de inicio y fin que delimitan el rango de búsqueda
+    void *mitad;                                // Puntero a la posición central actual
+    void *inicio = vec;                         // Puntero al primer elemento del array
+    void *fin = vec + (longitud - 1) * tamanio; // Puntero al último elemento del array
+    int resCmp;                                 // Variable para almacenar el resultado de la comparación
+    
+    // El bucle continúa mientras el puntero de inicio no supere al puntero de fin
+    while (inicio <= fin) {
+        // Calcula la dirección de la mitad del rango actual utilizando aritmética de punteros
+        mitad = inicio + ((fin - inicio) / (2 * tamanio)) * tamanio;
+        
+        // Compara el valor buscado con el valor en la posición de mitad
+        resCmp = cmp(buscar, mitad);
+        
+        // Si la comparación da cero, significa que hemos encontrado el valor
+        if (resCmp == 0)
+            return mitad;  // Devuelve el puntero al valor encontrado
+
+        // Si el valor buscado es menor que el valor en la posición de mitad
+        else if (resCmp < 0)
+            fin = mitad - tamanio;  // Ajusta el puntero de fin para reducir la búsqueda a la mitad inferior
+
+        // Si el valor buscado es mayor que el valor en la posición de mitad
+        else
+            inicio = mitad + tamanio;  // Ajusta el puntero de inicio para reducir la búsqueda a la mitad superior
+    }
+    
+    // Si el bucle termina sin encontrar el valor, se retorna NULL
+    return NULL;
+}
+~~~
+
+Podemos hacer una prueba de la funcion con el codigo:
+
+~~~c
+int vec[] = {3,5,9,12,15};
+int bus[] = {1,3,4,6,9,11,12,15,18};
+
+for(int i = 0; i < sizeof(bus)/sizeof(*bus); i++)
+    printf("~ Posicion en Memoria: %u\n",busquedaBinaria(bus+i,vec,sizeof(vec)/sizeof(*vec),sizeof(*vec),comparacionInt));
+~~~
+
+## Estructuras
+
+### Tamaño de la Estructura
+
+Las estructuras se siguen declarando de la misma manera, recordando que se debe tener cuidado al momento de contar a mano la cantidad de bytes que ocupa, debido que al final de cada estructura el S.O agrega un dato. Ejemplo:
+
+~~~c
+#define TAM 50
+
+typedef
+{
+    int legajo;
+    char nombre[TAM];
+    float sueldo;
+} EMPLEADO;
+
+// sizeof(EMPLEADO) != 4(int) + 50(char[50]) + 4(float) = 58 bytes
+~~~
+
+### Uso de Punteros
+
+Se le puede pasar como argumento a una funcion la dirección de memoria de la estructura, con el fin de no duplicar el dato que se utilizara y ahorrar recursos. La manipulacion del mismo con punteros es el mismo ya conocido, la unica diferencia es que para acceder a una propiedad mediante la direccion de memoria se utiliza la sintaxis de flecha `->` y no la del punto. Ejemplo:
+
+~~~c
+//Pasar direccion de memoria, porque si no realiza una copia del dato
+int aumentarSueldo(EMPLEADO *emp) 
 {
     EMPLEADO *he = (EMPLEADO*);
     // Hacemos uso de flecha para acceder una propiedad de puntero de estructura
