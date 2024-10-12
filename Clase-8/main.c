@@ -55,7 +55,7 @@ int crearPalindromos(const char* nomArch)
     return 1;
 }
 
-int lecturaPalindromos(const char* nomArch)
+int lecPalindromos(const char* nomArch)
 {
     FILE *arch = fopen(nomArch,"rt");
     char linea[MAXNOM];
@@ -82,7 +82,7 @@ Texto Estructurado Variable
 #define SEPARADOR '|'
 
 // Escritura
-int crearEstudiantesVariable(const char* nomArch)
+int crearEstsVar(const char* nomArch)
 {
     size_t i;
     ESTS est[] =
@@ -104,7 +104,7 @@ int crearEstudiantesVariable(const char* nomArch)
 }
 
 // Lectura
-int lecturaEstudiante(ESTS* est, char *linea)
+int lecEstVar(ESTS* est, char *linea)
 {
     char *dirSeparador;
 
@@ -128,7 +128,7 @@ int lecturaEstudiante(ESTS* est, char *linea)
     return 1;
 }
 
-int lecturaEstudiantesVariable(const char* nomArch)
+int lecEstsVar(const char* nomArch)
 {
     FILE* arch = fopen(nomArch,"rt");
     ESTS est;
@@ -154,7 +154,7 @@ int lecturaEstudiantesVariable(const char* nomArch)
 
     // Manera Manual
     printf("\nManera Manual:\n");
-    while(fgets(linea,MAXLINE,arch) && lecturaEstudiante(&est,linea))
+    while(fgets(linea,MAXLINE,arch) && lecEstVar(&est,linea))
         printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
 
     fclose(arch);
@@ -172,13 +172,13 @@ Texto Estructurado Fijo
 #define ESTRUC_EST_FIJO_LECTURA "%4d%23[^\n]%7f\n"
 
 // Escritura
-int crearEstudiantesFijo(const char* nomArch)
+int crearEstsFijo(const char* nomArch)
 {
     ESTS est[] =
     {
-        {10,"Eva Peron",28.2},
-        {20,"Maria",22.5},
-        {30,"Juan",134.67} // Flotante al Limite
+        {10,"Tiago Pujia",28.2},
+        {20,"Vladimir Francisco",22.5},
+        {30,"Pablo Soligo",134.67} // Flotante al Limite
     };
     size_t i;
 
@@ -194,7 +194,27 @@ int crearEstudiantesFijo(const char* nomArch)
     return 1;
 }
 
-int lecturaEstudiantesFijo(const char* nomArch)
+int lecEstFijo(ESTS* est, char *linea)
+{
+    char *dirCampo = linea + sizeof(ESTS);
+
+    // Lectura Promedio
+    dirCampo -= sizeof(est->prom);
+    sscanf(dirCampo,"%f",&(est->prom));
+    *dirCampo = '\0';
+
+    // Lectura Nombre
+    dirCampo -= sizeof(est->nombre);
+    sscanf(dirCampo,"%[^\n]",est->nombre);
+    *dirCampo = '\0';
+
+    // Lectura Legajo
+    sscanf(linea,"%d",&(est->leg));
+
+    return 1;
+}
+
+int lecEstsFijo(const char* nomArch)
 {
     FILE* arch = fopen(nomArch,"rt");
     ESTS est;
@@ -203,19 +223,9 @@ int lecturaEstudiantesFijo(const char* nomArch)
     if(!arch)
         return 0;
 
-    // Manera Automatica
-    printf("Manera Automatica:\n");
-    while(fgets(linea,MAXLINE,arch))
-    {
-        sscanf(linea, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom);
+    // lecEstFijo produce la lectura manual enseñada
+    while(fgets(linea,MAXLINE,arch) && lecEstFijo(&est,linea))
         printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    }
-    rewind(arch);
-
-    printf("\nFuncion fscanf:\n");
-    while(fscanf(arch, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom) != EOF)
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    rewind(arch);
 
     fclose(arch);
     return 1;
@@ -230,21 +240,24 @@ int main()
 {
     // Texto No Estructurado
     system("cls");
-    crearPalindromos(NOMARCH_POLINDROMO);
-    lecturaPalindromos(NOMARCH_POLINDROMO);
+    crearPalindromos(NOMARCH_POLINDROMO)
+        ? lecPalindromos(NOMARCH_POLINDROMO)
+        : printf("Error al escribir en %s",NOMARCH_POLINDROMO);
     system("pause");
 
     // Texto Estructurado Variable
     system("cls");
-    crearEstudiantesVariable(NOMARCH_ESTUDIANTES_VARIABLE);
-    lecturaEstudiantesVariable(NOMARCH_ESTUDIANTES_VARIABLE);
+    crearEstsVar(NOMARCH_ESTUDIANTES_VARIABLE)
+        ? lecEstsVar(NOMARCH_ESTUDIANTES_VARIABLE)
+        : printf("Error al escribir en %s",NOMARCH_ESTUDIANTES_VARIABLE);
     system("pause");
 
     // Texto Estructurado Fijo
     system("cls");
-    crearEstudiantesFijo(NOMARCH_ESTUDIANTES_FIJO);
-    lecturaEstudiantesFijo(NOMARCH_ESTUDIANTES_FIJO);
-
+    crearEstsFijo(NOMARCH_ESTUDIANTES_FIJO)
+        ? lecEstsFijo(NOMARCH_ESTUDIANTES_FIJO)
+        : printf("Error al escribir en %s",NOMARCH_ESTUDIANTES_FIJO);
     puts("fin");
+
     return 0;
 }
