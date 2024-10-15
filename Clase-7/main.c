@@ -45,30 +45,36 @@ void* busquedaBinaria(void* buscar, void* vec, size_t longitud, size_t tamanio, 
 }
 
 // FUNCION ORDENAMIENTO POR SELECCION
-void intercambiarElementos(void *elementoA, void *elementoB, size_t tamanio)
+void intercambioElementos(void *el1, void *el2, size_t bytes)
 {
-    char aux;
-    size_t i;
-    for (i = 0; i < tamanio; i++)
+    // Definimos los punteros char para recorrer byte por byte los elementos
+    char *elChar1 = (char*)el1, *elChar2 = (char*)el2;
+    char aux;  // Variable auxiliar para almacenar temporalmente el valor de un byte
+
+    // Mientras queden bytes por intercambiar
+    while (bytes)
     {
-        aux = *(char*)elementoB;
-        *(char*)elementoB = *(char*)elementoA;
-        *(char*)elementoA = aux;
-        elementoA++;
-        elementoB++;
+        
+        aux = *elChar1;      // Guardamos el valor del byte actual de elChar1 en aux
+        *elChar1 = *elChar2; // Copiamos el valor de elChar2 a elChar1
+        *elChar2 = aux;      // Colocamos el valor guardado en aux en elChar2
+
+        elChar1++; // Avanzamos ambos punteros al siguiente byte
+        elChar2++; 
+        bytes--;   // Reducimos la cantidad de bytes restantes
     }
 }
 
 // Función que busca el menor elemento en el vector a partir de una posición dada
-void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int cmp(void*, void*))
+void* buscarMenor(void *vec, size_t longitud, size_t tamanio, int cmp(void*, void*))
 {
-    void *fin = vec + longitud * tamanio, // Calcular la direccion final del vector
+    void *fin = vec + (longitud - 1) * tamanio, // Calcular la dirección final del vec
          *pos = vec; // Apunta al elemento actual o primero, donde se guarda el menor
 
-    while(vec < fin) // Itera por cada elemento del vector comparando cuál es menor
+    while(vec < fin) // Itera cada elemento del vector comparando cuál es menor
     {
-        vec += tamanio; // Avanza al siguiente elemento, y 1° iteracion al 2° item
-        if(cmp(vec,pos) < 0) // Si el elemento actual es menor, actualiza por
+        vec += tamanio; // Avanza al siguiente elemento del vector (razon por la resta 1)
+        if(cmp(vec, pos) < 0) // Si el elemento actual es menor, actaliza pos
             pos = vec;
     }
 
@@ -78,21 +84,17 @@ void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int cmp(vo
 // Función que ordena un vector usando el método de selección con lógica genérica
 void ordenarSeleccion(void *vec, size_t longitud, size_t tamanio, int cmp(void*, void*))
 {
-    void *vecFin = vec + tamanio * (longitud - 1), // Puntero para controlar el final
-         *posMenor; // Puntero que almacena la direccion del menor elemento encontrado
+    void *vecFin = vec + tamanio * (longitud - 1), *posMenor;
 
-    // Itera en todos los items menos en el ultimo que no es necesario
     while (vec < vecFin)
     {
-        // Busca el menor en el rango actual (desde 'vec' hasta el final)
-        posMenor = buscarElementoMenor(vec, longitud, tamanio, cmp);
+        posMenor = buscarMenor(vec, longitud, tamanio, cmp);
 
-        // Si el menor no es el elemento actual, se intercambian
         if (posMenor != vec)
-            intercambiarElementos(vec, posMenor, tamanio);
-        
-        vec += tamanio; // Avanza al siguiente elemento en el array
-        longitud--;     // Como se avanzado en el vec, reducimos la longitud de búsqued
+            intercambio(vec, posMenor, tamanio);
+
+        vec += tamanio;
+        longitud--;
     }
 }
 
