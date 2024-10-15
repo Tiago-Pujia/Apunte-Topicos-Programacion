@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 // FUNCION GLOBAL
-int comparacionInt(const void *el1, const void *el2)
+int comparacionInt(void *el1, void *el2)
 {
     int *elInt1 = (int*)el1;
     int *elInt2 = (int*)el2;
@@ -60,41 +60,39 @@ void intercambiarElementos(void *elementoA, void *elementoB, size_t tamanio)
 }
 
 // Función que busca el menor elemento en el vector a partir de una posición dada
-void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+void* buscarElementoMenor(void *vec, size_t longitud, size_t tamanio, int cmp(void*, void*))
 {
-    size_t i;
-    void *elementoMenor = vec; // Puntero al menor elemento encontrado
-    vec += tamanio; // Puntero al elemento actual
+    void *fin = vec + longitud * tamanio, // Calcular la direccion final del vector
+         *pos = vec; // Apunta al elemento actual o primero, donde se guarda el menor
 
-    // Itera por cada elemento del vector comparando cuál es menor
-    for (i = 1; i < longitud; i++)
+    while(vec < fin) // Itera por cada elemento del vector comparando cuál es menor
     {
-        if (comparacion(vec, elementoMenor) < 0)
-            elementoMenor = vec;
-        vec += tamanio; // Avanza al siguiente elemento
+        vec += tamanio; // Avanza al siguiente elemento, y 1° iteracion al 2° item
+        if(cmp(vec,pos) < 0) // Si el elemento actual es menor, actualiza por
+            pos = vec;
     }
 
-    return elementoMenor; // Retorna la dirección del menor elemento
+    return pos; // Retorna la dirección del menor elemento
 }
 
 // Función que ordena un vector usando el método de selección con lógica genérica
-void ordenarSeleccion(void *vec, size_t longitud, size_t tamanio, int comparacion(const void*, const void*))
+void ordenarSeleccion(void *vec, size_t longitud, size_t tamanio, int cmp(void*, void*))
 {
-    size_t i;
-    void *elementoMenor;
+    void *vecFin = vec + tamanio * (longitud - 1), // Puntero para controlar el final
+         *posMenor; // Puntero que almacena la direccion del menor elemento encontrado
 
-    // Itera por cada elemento del vector para buscar su posición correcta
-    for (i = 0; i < longitud; i++)
+    // Itera en todos los items menos en el ultimo que no es necesario
+    while (vec < vecFin)
     {
-        // Busca el menor elemento a partir de la posición actual
-        elementoMenor = buscarElementoMenor(vec, longitud - i, tamanio, comparacion);
+        // Busca el menor en el rango actual (desde 'vec' hasta el final)
+        posMenor = buscarElementoMenor(vec, longitud, tamanio, cmp);
+
+        // Si el menor no es el elemento actual, se intercambian
+        if (posMenor != vec)
+            intercambiarElementos(vec, posMenor, tamanio);
         
-        // Si el menor elemento no está en la posición actual, intercambia
-        if (elementoMenor != vec)
-            intercambiarElementos(elementoMenor, vec, tamanio);
-        
-        // Avanza al siguiente elemento
-        vec += tamanio; 
+        vec += tamanio; // Avanza al siguiente elemento en el array
+        longitud--;     // Como se avanzado en el vec, reducimos la longitud de búsqued
     }
 }
 

@@ -37,14 +37,14 @@
   - [Argumentos al Main](#argumentos-al-main)
   - [Función con Tipo de Dato Universal](#función-con-tipo-de-dato-universal)
   - [Copiar Bloque de Memoria](#copiar-bloque-de-memoria)
-- [Clase 6](#clase-6-1)
+- [Clase 7](#clase-7)
   - [funcion insertar ordenado generico](#funcion-insertar-ordenado-generico)
   - [Algoritmo de Ordenamiento (metodo seleccion)](#algoritmo-de-ordenamiento-metodo-seleccion)
   - [Busqueda Binaria](#busqueda-binaria)
   - [Estructuras](#estructuras)
     - [Tamaño de la Estructura](#tamaño-de-la-estructura)
     - [Uso de Punteros](#uso-de-punteros)
-- [Clase 7](#clase-7)
+- [Clase 8](#clase-8)
   - [Tipos de Archivos](#tipos-de-archivos)
   - [Manipulacion de Archivos](#manipulacion-de-archivos)
   - [Lectura de Archivos de Texto no Estructurado](#lectura-de-archivos-de-texto-no-estructurado)
@@ -1015,7 +1015,7 @@ int memcmp(const void *dir1, const void *dir2, size_t bytes)
 }
 ~~~
 
-# Clase 6
+# Clase 7
 
 ## funcion insertar ordenado generico
 
@@ -1225,7 +1225,7 @@ int aumentarSueldo(EMPLEADO *emp)
 }
 ~~~
 
-# Clase 7
+# Clase 8
 
 "Hacer uso de la libreria qsort para ordenamiento"
 

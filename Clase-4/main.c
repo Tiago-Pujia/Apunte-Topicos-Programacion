@@ -3,15 +3,37 @@
 
 #define TAM 50
 
-void strcpy(char *destino, char *origen)
+char strcpy(char *destino, char *origen)
 {
+    char *ini = destino; // Debemos retornar la direccion inicial de destino
+
+    // Copia cada carácter de 'origen' a 'destino' mientras no sea el caracter nulo
     while(*origen)
     {
-        *destino = *origen;
-
-        destino++;
-        origen++;
+        *destino = *origen; // Asigna el caracter actual de 'origen' a 'destino'
+        destino++;          // Avanza el puntero 'destino'
+        origen++;           // Avanza el puntero 'origen'
     }
+    *destino = '\0'; // Añade el carácter nulo al final de la cadena copiada
+
+    return ini;
+}
+
+char strncpy(char *destino, char *origen, size_t bytes)
+{
+    char *ini = destino; // Debemos retornar la direccion inicial de destino
+
+    // Copia cada carácter de 'origen' a 'destino' mientras no sea el caracter nulo
+    while(*origen && bytes)
+    {
+        *destino = *origen; // Asigna el caracter actual de 'origen' a 'destino'
+        destino++;          // Avanza el puntero 'destino'
+        origen++;           // Avanza el puntero 'origen'
+        bytes--;            // Decrementa  el contador de bytes a copiar
+    }
+    *destino = '\0'; // Añade el carácter nulo al final de la cadena copiada
+
+    return ini;
 }
 
 char* strcat(char *destino, char *origen)
@@ -31,7 +53,7 @@ char* strcat(char *destino, char *origen)
     return ini;
 }
 
-signed char strcmp(const char *str1,const char *str2)
+char strcmp(const char *str1,const char *str2)
 {
     while(*str1 == *str2 && *str1 && *str2)
     {
@@ -61,14 +83,11 @@ int strchr(char *str, const char buscar)
     return -1;
 }
 
+#define STRINGIFY(x) #x
+
 int main()
 {
-    char string1[] = "Hola",
-         string2[] = "Hola MunDo";
-
-    system("cls");
-    //strcpy(string1,string2);
-    printf("%d",strchr(string2,'D'));
+    printf("%s",STRINGIFY(123.2));
 
     return 0;
 }

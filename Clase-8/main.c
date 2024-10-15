@@ -222,9 +222,25 @@ int lecEstsFijo(const char* nomArch)
 
     if(!arch)
         return 0;
+    
+    // Funcion fscanf
+    printf("\nFuncion fscanf:\n");
+    while(fscanf(arch, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom) != EOF)
+        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
+    rewind(arch);
 
-    // lecEstFijo produce la lectura manual enseñada
-    while(fgets(linea,MAXLINE,arch) && lecEstFijo(&est,linea))
+    // Manera Automatica
+    printf("\nManera Automatica:\n");
+    while(fgets(linea,MAXLINE,arch))
+    {
+        sscanf(linea, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom);
+        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
+    }
+    rewind(arch);
+
+    // Manera Manual
+    printf("\nManera Manual:\n");
+    while(fgets(linea, MAXLINE,arch) && lecEstFijo(&est,linea))
         printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
 
     fclose(arch);
@@ -236,6 +252,7 @@ int lecEstsFijo(const char* nomArch)
 MAIN
 ====================================
 */
+
 int main()
 {
     // Texto No Estructurado
