@@ -3,6 +3,7 @@
 
 #define MAXLINE 100
 #define MAXNOM 24
+#define IMPRIMIR "%d|%s|%.2f\n"
 
 typedef struct
 {
@@ -10,6 +11,7 @@ typedef struct
     char nombre[MAXNOM];
     float prom;
 } ESTS;
+
 
 char* strrchr(char *str, const char buscar)
 {
@@ -104,9 +106,13 @@ int crearEstsVar(const char* nomArch)
 }
 
 // Lectura
-int lecEstVar(ESTS* est, char *linea)
+int trozarEstVar(ESTS* est, char *linea)
 {
     char *dirSeparador;
+
+    // Eliminar salto de linea
+    dirSeparador = strrchr(linea,'\n');
+    *dirSeparador = '\0';
 
     // Lectura Promedio
     dirSeparador = strrchr(linea,SEPARADOR);
@@ -137,25 +143,8 @@ int lecEstsVar(const char* nomArch)
     if(!arch)
         return 0;
 
-    // Utilización con función fscanf
-    printf("Funcion fscanf:\n");
-    while(fscanf(arch, ESTRUC_EST_VARIABLE_LECTURA, &est.leg, est.nombre, &est.prom) != EOF)
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    rewind(arch);
-
-    // Manera Automatica
-    printf("\nManera Automatica:\n");
-    while(fgets(linea,MAXLINE,arch))
-    {
-        sscanf(linea, ESTRUC_EST_VARIABLE_LECTURA, &est.leg, est.nombre, &est.prom);
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    }
-    rewind(arch);
-
-    // Manera Manual
-    printf("\nManera Manual:\n");
     while(fgets(linea,MAXLINE,arch) && lecEstVar(&est,linea))
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
+        printf(IMPRIMIR,est.leg,est.nombre,est.prom);
 
     fclose(arch);
     return 1;
@@ -166,8 +155,16 @@ int lecEstsVar(const char* nomArch)
 Texto Estructurado Fijo
 ====================================
 */
-
+// NOMBRE ARCHIVO
 #define NOMARCH_ESTUDIANTES_FIJO "estudiantes(formato fijo).txt"
+
+// Longitudes
+#define TAM_LEG 4
+#define TAM_NOM 23
+#define TAM_PRO 7
+// total = 4 + 23 + 7 = 34
+
+// FORMATO
 #define ESTRUC_EST_FIJO_ESCRITURA "%4d%23s%7.2f\n"
 #define ESTRUC_EST_FIJO_LECTURA "%4d%23[^\n]%7f\n"
 
@@ -194,22 +191,26 @@ int crearEstsFijo(const char* nomArch)
     return 1;
 }
 
-int lecEstFijo(ESTS* est, char *linea)
+int trozarEstFijo(ESTS* est, char *linea)
 {
-    char *dirCampo = linea + sizeof(ESTS);
+    char *dirCampo = linea + TAM_LEG + TAM_NOM + TAM_PRO;
+    // char *dirCampo = linea + 34
+
+    // Eliminamos salto de linea
+    *dirCampo = '\0';
 
     // Lectura Promedio
-    dirCampo -= sizeof(est->prom);
-    sscanf(dirCampo,"%f",&(est->prom));
+    dirCampo -= TAM_PRO; // 7
+    sscanf(dirCampo,"%f",&est->prom);
     *dirCampo = '\0';
 
     // Lectura Nombre
-    dirCampo -= sizeof(est->nombre);
+    dirCampo -= TAM_NOM; // 23
     sscanf(dirCampo,"%[^\n]",est->nombre);
     *dirCampo = '\0';
 
     // Lectura Legajo
-    sscanf(linea,"%d",&(est->leg));
+    sscanf(linea,"%d",&est->leg);
 
     return 1;
 }
@@ -222,26 +223,9 @@ int lecEstsFijo(const char* nomArch)
 
     if(!arch)
         return 0;
-    
-    // Funcion fscanf
-    printf("\nFuncion fscanf:\n");
-    while(fscanf(arch, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom) != EOF)
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    rewind(arch);
 
-    // Manera Automatica
-    printf("\nManera Automatica:\n");
-    while(fgets(linea,MAXLINE,arch))
-    {
-        sscanf(linea, ESTRUC_EST_FIJO_LECTURA, &est.leg, est.nombre, &est.prom);
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
-    }
-    rewind(arch);
-
-    // Manera Manual
-    printf("\nManera Manual:\n");
-    while(fgets(linea, MAXLINE,arch) && lecEstFijo(&est,linea))
-        printf("%d %s %.2f\n",est.leg,est.nombre,est.prom);
+    while(fgets(linea, MAXLINE, arch) && trozarEstFijo(&est, linea))
+        printf("%d - %s - %.2f",est.leg,est.nombre,est.prom);
 
     fclose(arch);
     return 1;
@@ -275,6 +259,8 @@ int main()
         ? lecEstsFijo(NOMARCH_ESTUDIANTES_FIJO)
         : printf("Error al escribir en %s",NOMARCH_ESTUDIANTES_FIJO);
     puts("fin");
+   system("cls");
+   puts(ESTRUC_EST_FIJO_ESCRITURA);
 
     return 0;
 }
